@@ -1,8 +1,13 @@
 import express from "express";
 import wSocket from "express-ws";
 
-const app = express();
-const ws = wSocket(app); // Websocket
+const app = express(); // Creating App & Websocket
+const websocket = wSocket(app);
+const PORT = 3000;
+
+// Initialize middle-ware(s)
+app.use(express.json()); // Bodyparser built-in function
+app.use(express.urlencoded({ extended: true }));
 
 // View engine
 app.set('view engine', 'ejs');
@@ -16,26 +21,37 @@ app.get('/', function(req, res) {
 
 
 // Websocket
-let i = 0;
-
 app.ws('/echo', function(ws, req) {
+
     // Receiver
     ws.on('message', function(message) {
         console.log(`Message from client: ${message}`)
     });
 
     // Sender
+    ws.send(JSON.stringify({ type: "echo" }));
+});
 
-    let currentInterval = setInterval(function() {
-        ws.send(++i);
-    }, 1000);
+// Broadcast websocket
+const websocketClients = websocket.getWss('/echo');
 
-    ws.on("close", function(message) {
-        clearInterval(currentInterval);
-    })
+app.post('/contestant', function(req, res) {
+    const contestant = req.body["name"];
+
+    res.send("Test");
+
+    // Send to all channels (clients)
+    websocketClients.clients.forEach(function(client) {
+        client.send(JSON.stringify({ type: "starting", contestant: contestant }));
+    });
+});
+
+websocketClients.clients.forEach(function(client) {
+    client.send("Test111-b");
 });
 
 
-app.listen(3000, function() {
+
+app.listen(PORT, function() {
     console.log("Webserver Started");
 })

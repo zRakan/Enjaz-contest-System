@@ -1,0 +1,129 @@
+/* Load font */
+@font-face {
+    font-family: montaser;
+    src: url(assets/font.ttf);
+}
+
+p {
+    width: fit-content;
+    height: fit-content;
+
+    font-family: 'montaser';
+
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-image: url('/assets/bg.jpg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
+
+/* 
+    Header
+*/
+
+header {
+    direction: ltr;
+}
+
+/* Header Title */
+header > h1 {
+    position: absolute;
+    top: 0%;
+
+    left: 50%;
+    transform: translate(-50%); /* Force center */
+    
+
+    font-family: 'montaser';
+    color: #144f43;
+    font-size: 60px;
+    text-align: center;
+}
+
+/* Header Logos */
+.logos {
+    position: relative;
+
+    top: 5px;
+    left: 5px;
+
+    width: fit-content;
+
+    display: flex;
+    flex-direction: row;
+
+    gap: 5px;
+}
+
+#imamu-logo {
+    width: 150px
+}
+
+#enjaz-logo {
+    width: 200px;
+    height: 200px;
+}
+
+
+/*
+    Content
+*/
+.contestant-container {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+}
+
+#contestant {
+    color: #ebc53a;
+}
+
+.contestant-container > p {
+    text-align: center;
+
+    color: #144f43;
+    font-size: 80px;
+}
+
+
+/*
+    Footer
+*/
+footer {
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+
+    background-color: #144f43;
+    border-radius: 80px 80px 0px 0px;
+
+
+    bottom: 0%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+footer > p {
+    font-size: 40px;
+
+    position: relative;
+    color: #ebc53a;
+}
