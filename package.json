@@ -1,0 +1,26 @@
+{
+  "name": "enjaz-contest-system",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "app": "node app.js",
+    "dev": "npx nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zRakan/Enjaz-contest-System.git"
+  },
+  "author": "zRakan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zRakan/Enjaz-contest-System/issues"
+  },
+  "homepage": "https://github.com/zRakan/Enjaz-contest-System#readme",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-ws": "^5.0.2"
+  }
+}
