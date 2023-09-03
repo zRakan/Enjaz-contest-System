@@ -83,6 +83,7 @@ app.post('/contestant', function(req, res) {
 });
 
 app.post('/stop', function(req, res) {
+    console.log("Stopped");
     stoppedTimer = new Date();
 
     // Send to all channels (clients)

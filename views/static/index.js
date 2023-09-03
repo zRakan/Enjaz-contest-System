@@ -32,12 +32,15 @@ addEventListener("load", async function() {
     // Sort winners
     winners.sort(function(a, b) { return a.winAt - b.winAt });
 
-    for(let i in winners)
+    for(let i in winners) {
+        if(i > 4) break;
+
         addUserToLeaderboard({
             pos: parseInt(i)+1,
             contestant: winners[i].contestant,
             winAt: winners[i].winAt
         });
+    }
 
     // Create WebSocket connection.
     let socket = new WebSocket("ws://localhost:3000/controller");
@@ -52,7 +55,7 @@ addEventListener("load", async function() {
 
     const contestant = document.querySelector("#contestant");
     const timer = document.querySelector("#timer");
-    socket.addEventListener("message", (event) => {
+    socket.addEventListener("message", function(event) {
         const data = JSON.parse(event.data);
         console.log(data);
 
@@ -63,12 +66,14 @@ addEventListener("load", async function() {
                 const currentTime = new Date();
                 contestant.innerHTML = data.contestant; // Set name
 
-                currentInterval = setInterval(function() {
+                currentInterval = setInterval(async function() {
                     console.log("Counting...");
                     const [minutes, seconds] = formatTime(new Date() - currentTime);
                     if(minutes == 2) {
                         console.log("Time-up");
-                        timer.innerHTML = 'انتهى الوقت !'
+                        timer.innerHTML = 'انتهى الوقت !';
+
+                        await fetch("http://localhost:3000/stop", { method: "POST" });
 
                         setTimeout(function() {
                             timer.innerHTML = 'في انتظار النتائج...'
@@ -103,12 +108,15 @@ addEventListener("load", async function() {
                 winners.sort(function(a, b) { return a.winAt - b.winAt });
                 usersList.innerHTML = ""; // Reset leaderboard
 
-                for(let i in winners)
+                for(let i in winners) {
+                    if(i > 4) break;
+                    
                     addUserToLeaderboard({
                         pos: parseInt(i)+1,
                         contestant: winners[i].contestant,
                         winAt: winners[i].winAt
                     });
+                }
 
 
                 // Reset Text
