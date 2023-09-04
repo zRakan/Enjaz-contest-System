@@ -97,7 +97,7 @@ addEventListener("load", async function() {
 
     // Variables
     let winners = []; // List of winners
-    let resp = await fetch("http://localhost:3000/winners");
+    let resp = await fetch("/winners");
         resp = await resp.json();
         winners = resp.data;
 
@@ -117,7 +117,7 @@ addEventListener("load", async function() {
     updateLeaderboard(winners);
 
     // Create WebSocket connection.
-    let socket = new WebSocket(`ws://localhost:3000/controller/${section}`);
+    let socket = new WebSocket(`ws://${location.host}/controller/${section}`);
 
     // Connection opened
     socket.addEventListener("open", function(event) {
@@ -148,7 +148,7 @@ addEventListener("load", async function() {
                         console.log("Time-up");
                         timer.innerHTML = 'انتهى الوقت !';
 
-                        await fetch("http://localhost:3000/stop", { method: "POST" });
+                        await fetch("/stop", { method: "POST" });
 
                         setTimeout(function() {
                             timer.innerHTML = 'في انتظار النتائج...'

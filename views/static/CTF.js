@@ -15,9 +15,9 @@ addEventListener("load", async function() {
         const keyCTF = inputCTF.value;
         inputCTF.value = ''; // Clear
 
-        await fetch(`http://localhost:3000/stop/${section}`, { method: "POST" }); // Stop the timer
+        await fetch(`/stop/${section}`, { method: "POST" }); // Stop the timer
         await delay(2000);
-        await fetch(`http://localhost:3000/CTF/${section}`, { 
+        await fetch(`/CTF/${section}`, { 
             method: "POST",
 
             headers: {
