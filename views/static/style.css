@@ -203,3 +203,54 @@ footer > p {
     position: relative;
     color: #ebc53a;
 }
+
+
+/*
+    CTF elements
+*/
+#title-CTF {
+    color: #ebc53a;
+    height: 60px;
+}
+
+#input-CTF {
+    border: none;
+    text-align: center;
+
+    font-family: 'montaser';
+    font-size: 20px;
+
+
+
+    width: 500px;
+    height: 200px;
+
+    margin-bottom: 10px;
+
+
+    background-color: #144f43;
+    color: #ebc53a;
+    border-radius: 30px;
+}
+
+#submit-CTF {
+    font-family: 'montaser';
+    font-size: 20px;
+
+    width: 250px;
+    height: 80px;
+
+    background-color: #144f43;
+    color: #ebc53a;
+
+    border: none;
+    border-radius: 30px;
+}
+
+#submit-CTF:hover {
+    background-color: #117c67;
+}
+
+#submit-CTF:active {
+    background-color: #144f43;
+}

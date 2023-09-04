@@ -35,8 +35,12 @@ app.set('view engine', 'ejs');
 // Static files
 app.use(express.static('views/static'))
 
+app.get("/CTF", function(req, res) {
+    res.render('CTF');
+})
+
 app.get('/', function(req, res) {
-    res.render("index");
+    res.render('index');
 });
 
 
@@ -179,7 +183,53 @@ app.post('/judged/:section', function(req, res) {
 
 app.get("/winners", function(req, res) {
     res.send({ status: "success", data: winners })
-})
+});
+
+// CTF contest
+const CTF_KEY = "Engaz{n3v3r_liv3_in_som3_on3_3lse_shadow}";
+app.post("/CTF/:section", function(req, res) {
+    const ctfKey = req.body["CTF_KEY"];
+    if(!ctfKey) {
+        res.status(400).send({ status: "error", message: "Invalid data" });
+        return;
+    }
+
+    const section = parseInt(req.params["section"]);
+
+    if(section != 1 && section != 2) {
+        res.status(400).send({ status: "error", message: "Invalid data" });
+        return;
+    }
+
+    // States
+    const currentState = states[section-1];
+    const isWinner = ctfKey == CTF_KEY;
+
+    const finishedAt = (currentState.stoppedTimer ? currentState.stoppedTimer : new Date()) - currentState.currentTimer;
+    currentState.currentSocket.send(JSON.stringify({ type: "finished", winner: isWinner, diff: finishedAt }));
+
+    if(isWinner) {
+        studentsData[currentState.currentContestant].winner = true;
+        studentsData[currentState.currentContestant].finished = finishedAt;    
+
+        winners.push({
+            contestant: studentsData[currentState.currentContestant].name,
+            winAt: finishedAt,
+            section: section
+        });
+
+        // Save student data
+        fs.writeFileSync("./students.json", JSON.stringify(studentsData, null, 4));
+
+        // Update leaderboard for all channels (clients)
+        websocketClients.clients.forEach(function(client) {
+            client.send(JSON.stringify({ type: "update", newWinners: winners, from: section }));
+        });
+    }
+
+    res.send({ status: "success" });
+});
+
 
 app.listen(PORT, function() {
     console.log("Webserver Started");
