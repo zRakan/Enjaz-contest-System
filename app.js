@@ -17,7 +17,8 @@ for(let student in studentsData) {
     if(studentsData[student].winner)
         winners.push({
             contestant: studentsData[student].name,
-            winAt: studentsData[student].finished
+            winAt: studentsData[student].finished,
+            section: studentsData[student].section
         });
 }
 
@@ -35,12 +36,28 @@ app.set('view engine', 'ejs');
 app.use(express.static('views/static'))
 
 app.get('/', function(req, res) {
-    res.render("index", { data: "Test2" });
+    res.render("index");
 });
 
 
 // Websocket
-app.ws('/controller', function(ws, req) {
+let states = [
+    { stoppedTimer: null, currentTimer: null, currentContestant: null, currentSocket: null }, // Male
+    { stoppedTimer: null, currentTimer: null, currentContestant: null, currentSocket: null }, // Female
+];
+
+app.ws('/controller/:section', function(ws, req) {
+    const section = parseInt(req.params["section"]);
+    if(section != 1 && section != 2) {
+        //res.status(400).send({ status: "error", message: "Invalid data" });
+        ws.close();
+        return;
+    }
+
+    console.log("Connected", req.params);
+
+    const currentState = states[section-1];
+    currentState.currentSocket = ws; // Set socket for instance
 
     // Receiver
     ws.on('message', function(message) {
@@ -54,20 +71,33 @@ app.ws('/controller', function(ws, req) {
 // Broadcast websocket
 const websocketClients = websocket.getWss('/controller');
 
-let stoppedTimer, currentTimer, currentContestant;
-app.post('/contestant', function(req, res) {
+app.post('/contestant/:section', function(req, res) {
     const contestant = req.body["name"]; // Contestant name
     const phoneNumber = req.body["pNumber"]; // Phone number
+    if(!contestant && !phoneNumber) {
+        res.status(400).send({ status: "error", message: "Invalid data" });
+        return;
+    }
+
+    const section = parseInt(req.params["section"]);
+
+    if(section != 1 && section != 2) {
+        res.status(400).send({ status: "error", message: "Invalid data" });
+        return;
+    }
+
+    const currentState = states[section-1];
 
     // Reset stopped timer
-    stoppedTimer = null;
+    currentState.stoppedTimer = null;
 
     // Current state
-    currentContestant = phoneNumber; // contestant
-    currentTimer = new Date(); // Counting date
+    currentState.currentContestant = phoneNumber; // contestant
+    currentState.currentTimer = new Date(); // Counting date
 
     studentsData[phoneNumber] = {
-        name: contestant
+        name: contestant,
+        section: section
     };
 
     // Save student data
@@ -77,46 +107,72 @@ app.post('/contestant', function(req, res) {
     res.send({ status: "success" });
 
     // Send to all channels (clients)
-    websocketClients.clients.forEach(function(client) {
+    /*websocketClients.clients.forEach(function(client) {
         client.send(JSON.stringify({ type: "starting", contestant: contestant }));
-    });
+    });*/
+
+    // Send to instance
+    currentState.currentSocket.send(JSON.stringify({ type: "starting", contestant: contestant }));
 });
 
-app.post('/stop', function(req, res) {
+app.post('/stop/:section', function(req, res) {
     console.log("Stopped");
-    stoppedTimer = new Date();
+    const section = parseInt(req.params["section"]);
+
+    if(section != 1 && section != 2) {
+        res.status(400).send({ status: "error", message: "Invalid data" });
+        return;
+    }
+
+    const currentState = states[section-1];
+    currentState.stoppedTimer = new Date();
+
+    res.send({ status: "success" });
+    currentState.currentSocket.send(JSON.stringify({ type: "stop" }));
 
     // Send to all channels (clients)
-    websocketClients.clients.forEach(function(client) {
+    /*websocketClients.clients.forEach(function(client) {
         client.send(JSON.stringify({ type: "stop" }));
-    });
-    
-    res.send({ status: "success" });
+    });*/
 });
 
 
-app.post('/judged', function(req, res) {
+app.post('/judged/:section', function(req, res) {
     const judgeResult = req.body["result"]; // [correct, wrong];
+    const section = parseInt(req.params["section"]);
+
+    if(section != 1 && section != 2) {
+        res.status(400).send({ status: "error", message: "Invalid data" });
+        return;
+    }
+
+    // States
+    const currentState = states[section-1];
+
     const isWinner = judgeResult == 'correct';
-    const finishedAt = (stoppedTimer ? stoppedTimer : new Date()) - currentTimer;
+    const finishedAt = (currentState.stoppedTimer ? currentState.stoppedTimer : new Date()) - currentState.currentTimer;
+
+    currentState.currentSocket.send(JSON.stringify({ type: "finished", winner: isWinner, diff: finishedAt }));
 
     if(isWinner) {
-        studentsData[currentContestant].winner = true;
-        studentsData[currentContestant].finished = finishedAt;    
+        studentsData[currentState.currentContestant].winner = true;
+        studentsData[currentState.currentContestant].finished = finishedAt;    
 
         winners.push({
-            contestant: studentsData[currentContestant].name,
-            winAt: finishedAt
+            contestant: studentsData[currentState.currentContestant].name,
+            winAt: finishedAt,
+            section: section
         });
 
         // Save student data
         fs.writeFileSync("./students.json", JSON.stringify(studentsData, null, 4));
+
+        // Update leaderboard for all channels (clients)
+        websocketClients.clients.forEach(function(client) {
+            client.send(JSON.stringify({ type: "update", newWinners: winners, from: section }));
+        });
     }
 
-    // Send to all channels (clients)
-    websocketClients.clients.forEach(function(client) {
-        client.send(JSON.stringify({ type: "finished", winner: isWinner, diff: finishedAt }));
-    });
 
     res.send({ status: "success" });
 });
