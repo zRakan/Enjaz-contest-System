@@ -2,10 +2,16 @@ import express from "express";
 import wSocket from "express-ws";
 import fs from "fs";
 
+// Logger
+import { logger } from "./logger.js";
+
 
 const app = express(); // Creating App & Websocket
 const websocket = wSocket(app);
+
 const PORT = 3000;
+const IS_PRODUCTION = false;
+
 
 // Reading JSON file
 let studentsData = JSON.parse(fs.readFileSync('./students.json'));
@@ -28,12 +34,16 @@ console.log(winners);
 // Initialize middle-ware(s)
 app.use(express.json()); // Bodyparser built-in function
 app.use(express.urlencoded({ extended: true }));
+app.use(logger); // Logging middleware
+
 
 // View engine
 app.set('view engine', 'ejs');
 
 // Static files
 app.use(express.static('views/static'))
+
+if(IS_PRODUCTION) app.set('trust proxy', 1) // Trust first proxy
 
 app.get("/CTF", function(req, res) {
     res.render('CTF');
