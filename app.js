@@ -109,6 +109,7 @@ app.ws('/controller/:section', function(ws, req) {
     // Receiver
 	ws.on('close', function(message) {
 		if(currentState.currentInterval) clearInterval(currentState.currentInterval);
+        console.log(`Ping #${section} terminated`)
 	});
 	
     ws.on('message', function(message) {
