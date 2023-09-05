@@ -117,7 +117,7 @@ addEventListener("load", async function() {
     updateLeaderboard(winners);
 
     // Create WebSocket connection.
-    let socket = new WebSocket(`ws://${location.host}/controller/${section}`);
+    let socket = new WebSocket(`wss://${location.host}/controller/${section}`);
 
     // Connection opened
     socket.addEventListener("open", function(event) {

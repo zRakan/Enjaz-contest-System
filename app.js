@@ -2,16 +2,41 @@ import express from "express";
 import wSocket from "express-ws";
 import fs from "fs";
 
-// Logger
+// Environment
+import dotenv from "dotenv";
+dotenv.config();
+
+
+// HTTPS & Logger
+import https from "https";
 import { logger } from "./logger.js";
 
 
 const app = express(); // Creating App & Websocket
-const websocket = wSocket(app);
 
-const PORT = 3000;
-const IS_PRODUCTION = false;
+const IS_PRODUCTION = true;
+const PORT = process.env.SSL_KEY != "" ? 8443 : 80; // Change to 80 if SSL not provided
 
+let httpsConnection
+if(process.env.SSL_KEY != "" && process.env.SSL_CERT != "") { // Check if environment has SSL cert or not
+    // SSL
+    httpsConnection = https.createServer({
+        key: fs.readFileSync(process.env.SSL_KEY),
+        cert: fs.readFileSync(process.env.SSL_CERT),
+    }, app)
+
+    httpsConnection.listen(PORT, () => {
+        console.log("[HTTPS] Started webserver");
+    });
+} else {
+    console.log("Environment doesn't have SSL cert, switching to http...")
+
+    app.listen(PORT, function() {
+        console.log("[HTTP] Started webserver");
+    });
+}
+
+const websocket = wSocket(app, httpsConnection);
 
 // Reading JSON file
 let studentsData = JSON.parse(fs.readFileSync('./students.json'));
@@ -45,19 +70,20 @@ app.use(express.static('views/static'))
 
 if(IS_PRODUCTION) app.set('trust proxy', 1) // Trust first proxy
 
-app.get("/CTF", function(req, res) {
-    res.render('CTF');
-})
-
 app.get('/', function(req, res) {
+	if(!req.query.section) {
+		res.sendStatus(400); // Return 400
+		return;
+	}
+	
     res.render('index');
 });
 
 
 // Websocket
 let states = [
-    { stoppedTimer: null, currentTimer: null, currentContestant: null, currentSocket: null }, // Male
-    { stoppedTimer: null, currentTimer: null, currentContestant: null, currentSocket: null }, // Female
+    { currentInterval: null, stoppedTimer: null, currentTimer: null, currentContestant: null, currentSocket: null }, // Male
+    { currentInterval: null, stoppedTimer: null, currentTimer: null, currentContestant: null, currentSocket: null }, // Female
 ];
 
 app.ws('/controller/:section', function(ws, req) {
@@ -67,13 +93,24 @@ app.ws('/controller/:section', function(ws, req) {
         ws.close();
         return;
     }
-
+	
     console.log("Connected", req.params);
 
     const currentState = states[section-1];
+	if(currentState.currentInterval) clearInterval(currentState.currentInterval);
+	
+	currentState.currentInterval = setInterval(function() {
+		ws.ping(function() {});
+		console.log(`Ping #${section}`);
+	}, 20000);
+	
     currentState.currentSocket = ws; // Set socket for instance
-
+	
     // Receiver
+	ws.on('close', function(message) {
+		if(currentState.currentInterval) clearInterval(currentState.currentInterval);
+	});
+	
     ws.on('message', function(message) {
         console.log(`Message from client: ${message}`)
     });
@@ -196,6 +233,15 @@ app.get("/winners", function(req, res) {
 });
 
 // CTF contest
+app.get("/CTF", function(req, res) {
+	if(!req.query.section) {
+		res.sendStatus(404); // Return 400
+		return;
+	}
+	
+    res.render('CTF');
+});
+
 const CTF_KEY = "Engaz{n3v3r_liv3_in_som3_on3_3lse_shadow}";
 app.post("/CTF/:section", function(req, res) {
     const ctfKey = req.body["CTF_KEY"];
@@ -239,8 +285,3 @@ app.post("/CTF/:section", function(req, res) {
 
     res.send({ status: "success" });
 });
-
-
-app.listen(PORT, function() {
-    console.log("Webserver Started");
-})
