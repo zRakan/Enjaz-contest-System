@@ -12,7 +12,8 @@ import https from "https";
 import { logger } from "./logger.js";
 
 
-const app = express(); // Creating App & Websocket
+const app = express(); // Creating App
+let websocket;
 
 const IS_PRODUCTION = true;
 const PORT = process.env.SSL_KEY != "" ? 8443 : 80; // Change to 80 if SSL not provided
@@ -23,7 +24,9 @@ if(process.env.SSL_KEY != "" && process.env.SSL_CERT != "") { // Check if enviro
     httpsConnection = https.createServer({
         key: fs.readFileSync(process.env.SSL_KEY),
         cert: fs.readFileSync(process.env.SSL_CERT),
-    }, app)
+    }, app);
+
+    websocket = wSocket(app, httpsConnection); // Creating secured Websocket (wss://)
 
     httpsConnection.listen(PORT, () => {
         console.log("[HTTPS] Started webserver");
@@ -31,12 +34,14 @@ if(process.env.SSL_KEY != "" && process.env.SSL_CERT != "") { // Check if enviro
 } else {
     console.log("Environment doesn't have SSL cert, switching to http...")
 
+    websocket = wSocket(app); // Creating Websocket (ws://)
+
     app.listen(PORT, function() {
         console.log("[HTTP] Started webserver");
     });
 }
+ 
 
-const websocket = wSocket(app, httpsConnection);
 
 // Reading JSON file
 let studentsData = JSON.parse(fs.readFileSync('./students.json'));
