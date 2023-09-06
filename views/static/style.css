@@ -72,6 +72,35 @@ header > h1 {
     height: 200px;
 }
 
+/*
+    Sponsorship
+*/
+.sponsor-container {
+    position: absolute;
+
+    left: 10px;
+    top: 50%;
+    transform: translate(0%, -50%);
+
+
+    width: 300px;
+
+    /*background-color: red;*/
+    border-color: #144f43;
+    
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+}
+
+.sponsor-container > p {
+    font-size: 25px;
+    color: #144f43;
+}
+
 
 /*
     Content
