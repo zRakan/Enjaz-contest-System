@@ -76,10 +76,7 @@ app.use(express.static('views/static'))
 if(IS_PRODUCTION) app.set('trust proxy', 1) // Trust first proxy
 
 app.get('/', function(req, res) {
-	if(!req.query.section) {
-		res.sendStatus(400); // Return 400
-		return;
-	}
+	if(!req.query.section) return res.sendStatus(400); // Return 400
 	
     res.render('index');
 });
