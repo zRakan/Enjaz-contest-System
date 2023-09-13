@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let isConnected = false;
     connectedButton.addEventListener('click', function() {
-        if(isConnected) return;
+        //if(isConnected) return;
 
         socket.emit("enjaz:new-contestant")
 
@@ -15,6 +15,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     socket.on('enjaz:updating', function(data) {
         console.log(data);
-        connectedUsers.innerHTML = `عدد المتصلين: ${data.connectedUsers}`;
+        connectedUsers.innerHTML = `عدد المشاركين: ${data.connectedUsers}`;
     });
 });
