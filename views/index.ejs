@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Enjaz contest</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles/index.css">
   </head>
 
   <body>
@@ -18,26 +18,14 @@
       </div>
 
       <!-- Title -->
-      <h1>التحدي البرمجي<br>نادي إنجاز</h1>
+      <h1>فعالية اليوم الوطني<br>نادي إنجاز</h1>
     </header>
 
 
     <!-- Contestant Container -->
     <div class="contestant-container">
-      <p>
-        <span id="contestant">في انتظار منافس...</span>
-        <br>
-        <span id="timer">00:00</span>
-      </p>
-    </div>
-
-
-    <!-- Leaderboard Container -->
-    <div class="leaderboard">
-      <h1>قائمة المتصدرين</h1>
-      
-      <div id="top-users">
-      </div>
+      <p>عدد المشاركين: <%= data %></p>
+      <button id="contestant-submit">الدخول</button>
     </div>
 
 
@@ -45,7 +33,7 @@
       <p>صُنع بإتقان من قِبل نادي إنجاز</p>
     </footer>
 
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="index.js"></script>
-  
   </body>
 </html>
