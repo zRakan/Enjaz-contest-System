@@ -120,7 +120,17 @@ header > h1 {
 }
 
 #contestant-name {
+    font-family: 'montaser';
+
+    background-color: #144f43;
+    color: #ebc53a;
     
+    text-align: center;
+
+    height: 30px;
+    border: none;
+
+    margin-bottom: 5px;
 }
 
 #contestant-submit {

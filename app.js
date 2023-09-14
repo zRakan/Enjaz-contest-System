@@ -55,17 +55,14 @@ websocket.on('connection', function(ws) {
 
     console.log('[SOCKET] User Connected', req.session.id);
 
+    // Getting current connected users
     ws.emit('enjaz:updating', { connectedUsers: playersConnected });
 
-    ws.on('disconnect', function() {
-        if(!connectedSockets[req.session.id]) return;
-        
-        connectedSockets[req.session.id] && delete connectedSockets[req.session.id];
-        websocket.emit('enjaz:updating', { connectedUsers: --playersConnected });
-    });
-
-    ws.on('enjaz:new-contestant', function() {
+    // New contestant
+    ws.on('enjaz:new-contestant', function(data) {
         if(connectedSockets[req.session.id]) return;
+
+        const name = data.name;
 
         // Save websocket session
         console.log(connectedSockets[req.session.id] ? "Non-First time" : "First time");
@@ -76,5 +73,14 @@ websocket.on('connection', function(ws) {
 
         console.log("Added contestant")
     });
+
+    // Websocket disconnected
+    /*ws.on('disconnect', function() {
+        if(!connectedSockets[req.session.id]) return;
+        
+        connectedSockets[req.session.id] && delete connectedSockets[req.session.id];
+        websocket.emit('enjaz:updating', { connectedUsers: --playersConnected });
+        console.log("[SOCKET] User Disconnected", req.session.id);
+    });*/
 });
 
