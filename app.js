@@ -4,6 +4,9 @@ import session from "express-session";
 // Websocket [Socket.io]
 import { Server } from "socket.io";
 
+// Import utils
+import * as utils from "./utils.js";
+
 // Reading & Writing files [fs]
 import fs from "fs";
 
@@ -62,11 +65,21 @@ websocket.on('connection', function(ws) {
     ws.on('enjaz:new-contestant', function(data) {
         if(connectedSockets[req.session.id]) return;
 
-        const name = data.name;
+        const NAME = data.name;
+        const SID = data.sid;
+
+        // Check if 
+        if(!utils.validateInput("arabic", NAME) || !utils.validateInput("numbers", SID) || SID.length != 9) {
+            console.log("[Socket-Validator] Disconnected client with bad input(s)", ws.id);
+            return ws.disconnect(true);
+        } 
 
         // Save websocket session
         console.log(connectedSockets[req.session.id] ? "Non-First time" : "First time");
         connectedSockets[req.session.id] = true
+
+        // Callback to client
+        ws.emit('enjaz:joined');
 
         // Websocket broadcast
         websocket.emit('enjaz:updating', { connectedUsers: ++playersConnected });
@@ -75,12 +88,14 @@ websocket.on('connection', function(ws) {
     });
 
     // Websocket disconnected
-    /*ws.on('disconnect', function() {
+    ws.on('disconnect', function() {
         if(!connectedSockets[req.session.id]) return;
         
+        console.log("Name", req.session.name);
+
         connectedSockets[req.session.id] && delete connectedSockets[req.session.id];
         websocket.emit('enjaz:updating', { connectedUsers: --playersConnected });
         console.log("[SOCKET] User Disconnected", req.session.id);
-    });*/
+    });
 });
 

@@ -26,9 +26,15 @@
     <div class="contestant-container">
       <p>عدد المشاركين: <%= data %></p>
 
-      <input type="text" id="contestant-name" placeholder="الرجاء كتابة الإسم">
+      <input type="text" class="contestant-input" id="contestant-name" placeholder="اسمك">
+      <input type="text" class="contestant-input" id="contestant-id" placeholder="رقمك الجامعي" maxlength="9">
+
       <button id="contestant-submit">الدخول</button>
     </div>
+
+
+    <!-- Notifications -->
+    <div class="notification-container"></div>
 
 
     <footer>
