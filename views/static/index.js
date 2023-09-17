@@ -43,6 +43,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const socket = io();
 
+
+    const contestantContainer = document.querySelector('.contestant-container');
     const connectedButton = document.querySelector('#contestant-submit');
     const connectedUsers = document.querySelector('.contestant-container > p');
 
@@ -64,13 +66,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // If input(s) is empty
         if(!nameVal) return showNotification("يجب عليك كتابة اسمك", "failed");
-        if(!sIdVal) return showNotification("يجب عليك كتابة رقمك الجامعي", "failed");
+        if(!(/^[أ-ي ]+$/).test(nameVal)) return showNotification("سرّك في نيويورك اكتب اسمك بالعربي", "failed"); // Name validation
 
-        // Bad input
-        // Name validation
-        if(!(/^[أ-ي ]+$/).test(nameVal)) return showNotification("الإسم فقط يتكون من حروف عربية", "failed");
-        
-        // SID Validation
+
+        if(!sIdVal) return showNotification("يجب عليك كتابة رقمك الجامعي", "failed");
         if(!(/^[0-9]+$/).test(sIdVal)) return showNotification("الرقم الجامعي يتكون من ارقام فقط", "failed");
         if(sIdVal.length != 9) return showNotification("الرقم الجامعي يجب ان يكون مكوّن من 9 خانات", "failed");
 
@@ -85,13 +84,52 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Client is connected successfully
-    socket.on('enjaz:joined', function() {
+    let currentState;
+    socket.on('enjaz:joined', function(data) {
+        console.log(data);
         isConnected = true;
-        showNotification("تم القبول", "success");
+
+        // Remove all
+        document.querySelectorAll('.contestant-container > :not(p)').forEach(e => e.remove());
+
+        currentState = data.game_state;
+
+        let dynamicElement;
+        switch(data.game_state) {
+            case "waiting":
+                if(dynamicElement) { // Check if element is existed
+                    dynamicElement.remove(); // Remove current element
+                    dynamicElement = null;
+                }
+            
+                dynamicElement = document.createElement('p');
+            
+                let dot = 1;
+                const interval = setInterval(function() {
+                    if(currentState != 'waiting') clearInterval(interval); // Destroy interval
+                    if(dot > 3) dot = 1;
+                    dynamicElement.innerHTML = `قيد الإنتظار${'.'.repeat(dot)}`;
+                    dot++;
+                }, 500);
+
+                contestantContainer.appendChild(dynamicElement);
+                break;
+        }
+
+        if(data.first_time) // Joined first time (Excluded re-join[refresh])
+            showNotification("تم القبول", "success");
     });
 
     socket.on('enjaz:updating', function(data) {
         console.log(data);
-        connectedUsers.innerHTML = `عدد المشاركين: ${data.connectedUsers}`;
+
+        switch(data.type) {
+            case 'connected_users':
+                connectedUsers.innerHTML = `عدد المشاركين: ${data.connected_users}`;
+                break;
+            
+            case 'game_state':
+                break;
+        }
     });
 });
