@@ -1,12 +1,6 @@
 import express from "express";
 import session from "express-session";
 
-// Websocket [Socket.io]
-import { Server } from "socket.io";
-
-// Import utils
-import * as utils from "./utils.js";
-
 // Reading & Writing files [fs]
 import fs from "fs";
 
@@ -33,13 +27,50 @@ app.set('view engine', 'ejs');
 // Static files
 app.use(express.static('views/static'))
 
-// Matchmaking information
-let playersConnected = 0;
+// Game state
+import * as game from "./game.js";
 
 app.get('/', function(req, res) {
-    res.render("index", { data: playersConnected });
+    if(game.getGameState() != 'waiting') return res.redirect('leaderboard');
+
+    console.log("Game state", game.getGameState())
+
+    res.render("index", { data: game.getNumberOfPlayers() });
 });
 
+const questions = [
+    {
+        '1+1': [2, 1],
+        '1+2': [3, 2],
+        '3+1': [4, 0],
+        '4+0': [4, 2]
+    },
+
+    {
+        '5+1': [6, 1],
+        '6+2': [8, 2],
+        '9+1': [10, 0],
+        '10+0': [10, 2]
+    },    
+]
+
+const API_KEY = 'RAKAN-33828438897517041749474368349544';
+function checkAuthorization(req, res, next) {
+    const apiKey = req.headers["api_key"];
+    if(!apiKey || apiKey != API_KEY) return res.sendStatus(403);
+    next();
+}
+
+app.post('/start/:question_id', checkAuthorization, function(req, res) {
+    let questionId = req.params['question_id'];
+    if(!questionId) res.sendStatus(403);
+
+    questionId = parseInt(questionId);
+    if(!questions[questionId-1]) return res.sendStatus(403);
+
+    res.send("Good API");
+    console.log(questions[questionId-1]);
+});
 
 let serverListener;
 serverListener = app.listen(PORT, function() {
@@ -47,55 +78,5 @@ serverListener = app.listen(PORT, function() {
 });
 
 // Creating websocket
-
-
-let websocket = new Server(serverListener);
-websocket.engine.use(sessionMD); // Using express-session with socket.io
-
-let connectedSockets = {}; // { socketObj: [] }
-websocket.on('connection', function(ws) {
-    const req = ws.request;
-
-    console.log('[SOCKET] User Connected', req.session.id);
-
-    // Getting current connected users
-    ws.emit('enjaz:updating', { connectedUsers: playersConnected });
-
-    // New contestant
-    ws.on('enjaz:new-contestant', function(data) {
-        if(connectedSockets[req.session.id]) return;
-
-        const NAME = data.name;
-        const SID = data.sid;
-
-        // Check if 
-        if(!utils.validateInput("arabic", NAME) || !utils.validateInput("numbers", SID) || SID.length != 9) {
-            console.log("[Socket-Validator] Disconnected client with bad input(s)", ws.id);
-            return ws.disconnect(true);
-        } 
-
-        // Save websocket session
-        console.log(connectedSockets[req.session.id] ? "Non-First time" : "First time");
-        connectedSockets[req.session.id] = true
-
-        // Callback to client
-        ws.emit('enjaz:joined');
-
-        // Websocket broadcast
-        websocket.emit('enjaz:updating', { connectedUsers: ++playersConnected });
-
-        console.log("Added contestant")
-    });
-
-    // Websocket disconnected
-    ws.on('disconnect', function() {
-        if(!connectedSockets[req.session.id]) return;
-        
-        console.log("Name", req.session.name);
-
-        connectedSockets[req.session.id] && delete connectedSockets[req.session.id];
-        websocket.emit('enjaz:updating', { connectedUsers: --playersConnected });
-        console.log("[SOCKET] User Disconnected", req.session.id);
-    });
-});
-
+import { startWebsocket } from "./websocket.js";
+const websocket = startWebsocket(serverListener, sessionMD);

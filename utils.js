@@ -7,3 +7,19 @@ export function validateInput(type, string) {
 
     return validations[type].test(string);
 }
+
+export function randomStr(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+
+    
+    let result = '';    
+    let counter = 0;
+
+    while (counter < length) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        counter++;
+    }
+
+    return result;
+}
