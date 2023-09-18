@@ -5,16 +5,20 @@ let gameState = 'waiting'; // [waiting, starting, started]
 
 let playersConnected = {};
 let playersCounter = 0;
+let gameTimer
 
 // Game management
 export function startGame() {
     const io = getInstance();
 
-    const startingTime = new Date();
-          startingTime.setSeconds(startingTime.getSeconds() + 10);
+    gameTimer = new Date();
+    gameTimer.setSeconds(gameTimer.getSeconds() + 10);
 
     gameState = 'starting';
     io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: gameState });
+
+    io.except('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-joined' });
+    io.except('contestant').disconnectSockets(); // Disconnect all websockets of non-participants
 
     // Start game after 10 seconds
     setTimeout(function() {
@@ -28,6 +32,10 @@ export function stopGame() {
 }
 
 // Game information
+export function getGameTimer() {
+    return gameTimer; 
+}
+
 export function getGameState() {
     return gameState;
 }

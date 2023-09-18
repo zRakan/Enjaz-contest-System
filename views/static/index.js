@@ -37,13 +37,28 @@ function showNotification(message, status) {
     }, 5);
 }
 
+
+let isConnected = false;
+let containerInput;
 let contestantContainer;
 let currentState;
 let dynamicElement;
-function changeGameState(state) {
+function changeGameState(state, data) {
     currentState = state;
 
     switch(state) {
+        case 'not-started':
+            isConnected = false;
+
+            if(dynamicElement) { // Check if element is existed
+                dynamicElement.remove(); // Remove current element
+                dynamicElement = null;
+            }
+
+            // Bring back input
+            containerInput.classList.remove('hidden');
+
+            break;
         case "waiting":
             if(dynamicElement) { // Check if element is existed
                 dynamicElement.remove(); // Remove current element
@@ -67,13 +82,23 @@ function changeGameState(state) {
             contestantContainer.appendChild(dynamicElement);
             break;
         case 'starting':
+            if(!dynamicElement) {
+                dynamicElement = document.createElement('p');
+                contestantContainer.appendChild(dynamicElement);
+            }
+
             console.log("Starting...");   
 
-            const startingTime = new Date();
-                  startingTime.setSeconds(startingTime.getSeconds() + 10);
+            let startingTime;
+
+            if(!data || !data.current_timer) {
+                startingTime = new Date();
+                startingTime.setSeconds(startingTime.getSeconds() + 10);
+            } else startingTime = new Date(data.current_timer);
 
             const startingInterval = setInterval(function() {
                 const remainingSeconds = ((startingTime - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
+                console.log("remining", remainingSeconds);
 
                 if(currentState != 'starting' || remainingSeconds <= 0) {
                     clearInterval(startingInterval)
@@ -91,6 +116,21 @@ function changeGameState(state) {
             }
 
             break;
+        case 'not-joined':
+            // Hide inputs
+            //document.querySelectorAll('.contestant-container > :not(p)').forEach(e => e.remove());
+            containerInput.classList.add('hidden');
+
+            dynamicElement = document.createElement('p');
+            dynamicElement.innerHTML = 'لا يمكنك التسجيل، بدأت الجولة، سيتم تحويلك إلى صفحة المصتدرين...';
+
+            contestantContainer.appendChild(dynamicElement);
+
+            setTimeout(function() {
+                location.href = '/leaderboard';
+            }, 3000)
+
+            break;
     }
 }
 
@@ -102,16 +142,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
     contestantContainer = document.querySelector('.contestant-container');
-    const connectedButton = document.querySelector('#contestant-submit');
     const connectedUsers = document.querySelector('.contestant-container > p');
 
 
-    const nameInput = document.querySelector('#contestant-name');
-    const sIdInput = document.querySelector('#contestant-id');
+    // Start game container
+        containerInput = document.querySelector('#start-game');
+        const connectedButton = document.querySelector('#contestant-submit');
+        const nameInput = document.querySelector('#contestant-name');
+        const sIdInput = document.querySelector('#contestant-id');
 
     let cooldownActions = false;
 
-    let isConnected = false;
     connectedButton.addEventListener('click', function() {
         if(cooldownActions) return showNotification("يجب عليك الإنتظار...", 'warning');        
         if(isConnected) return;
@@ -146,9 +187,14 @@ document.addEventListener("DOMContentLoaded", function() {
         isConnected = true;
 
         // Remove all
-        document.querySelectorAll('.contestant-container > :not(p)').forEach(e => e.remove());
+        //document.querySelectorAll('.contestant-container > :not(p)').forEach(e => e.remove());
+        containerInput.classList.add('hidden');
 
-        changeGameState(data.game_state);
+        let additionalData = {};
+
+        if(data.current_timer) additionalData['current_timer'] = data.current_timer;
+
+        changeGameState(data.game_state, additionalData);
 
         if(data.first_time) // Joined first time (Excluded re-join[refresh])
             showNotification("تم القبول", "success");
@@ -166,5 +212,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 changeGameState(data.current_state);
                 break;
         }
+    });
+
+
+    socket.on('disconnect', function() {
+        console.log("Disconnect")
     });
 });

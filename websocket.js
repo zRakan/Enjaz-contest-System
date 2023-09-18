@@ -34,8 +34,16 @@ export function startWebsocket(listener, engine) {
 
         // is user already joined?
         if(game.isPlayerJoined(ID)) {
+            let joinPayload = { game_state: game.getGameState() };
+
+            if(game.getGameState() == 'starting') // If game is starting, getting the starting timer
+                joinPayload['current_timer'] = game.getGameTimer();
+
             ws.join('contestant'); // Set client websocket as contestant
-            ws.emit('enjaz:joined', { game_state: game.getGameState() });
+            ws.emit('enjaz:joined', joinPayload);
+        } else {
+            if(game.getGameState() == 'waiting')
+                ws.emit('enjaz:updating', { type: 'game_state', current_state: 'not-started' });
         }
 
         // New contestant
