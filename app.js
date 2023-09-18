@@ -74,6 +74,11 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
     game.startGame();
 });
 
+app.post('/stop', checkAuthorization, async function(req, res) {
+    res.send("Good API");
+    await game.stopGame();
+});
+
 let serverListener;
 serverListener = app.listen(PORT, function() {
     console.log("Webserver Started");

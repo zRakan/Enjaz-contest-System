@@ -14,21 +14,42 @@ export function startGame() {
     gameTimer = new Date();
     gameTimer.setSeconds(gameTimer.getSeconds() + 10);
 
-    gameState = 'starting';
-    io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: gameState });
+    changeGameState('starting', io);
 
     io.except('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-joined' });
     io.except('contestant').disconnectSockets(); // Disconnect all websockets of non-participants
 
     // Start game after 10 seconds
-    setTimeout(function() {
-        gameState = 'started';
-        io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: gameState });        
+    const interval = setTimeout(function() {
+        if(getGameState() != 'starting') return clearTimeout(interval);
+
+        changeGameState('started', io);
     }, 10000);
 }
 
-export function stopGame() {
+export async function stopGame() {
+    const io = getInstance();
 
+    // Return all contestants to main menu
+    io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-started' });
+
+    // Reset player information
+    playersCounter = 0;
+    playersConnected = {}; // Reset list
+    io.emit('enjaz:updating', { type: "connected_users", connected_users: getNumberOfPlayers() });
+
+
+    // Kick contestants from 'contestant' channel
+    const contestants = await io.to('contestant').fetchSockets(); 
+    console.log('number of contestants', contestants.length);
+    for(let contestant of contestants) {
+        console.log(contestant.id);
+
+        contestant.leave('contestant'); 
+    }
+
+    // Change state of game
+    changeGameState('waiting', io);
 }
 
 // Game information
@@ -40,7 +61,8 @@ export function getGameState() {
     return gameState;
 }
 
-export function changeGameState(state) {
+export function changeGameState(state, io) {
+    io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: state });
     gameState = state;
 }
 
