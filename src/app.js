@@ -25,7 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 // Static files
-app.use(express.static('views/static'))
+app.set('views', 'src/views'); // Set views folder
+app.use(express.static('./src/views/static')) // Set static folder
 
 // Game state
 import * as game from "./game.js";
