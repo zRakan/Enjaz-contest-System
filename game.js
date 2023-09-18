@@ -1,4 +1,4 @@
-import { getInstance } from "./websocket.js";
+import { getNamespace } from "./websockets/game_socket.js";
 
 // Matchmaking information
 let gameState = 'waiting'; // [waiting, starting, started]
@@ -9,7 +9,7 @@ let gameTimer
 
 // Game management
 export function startGame() {
-    const io = getInstance();
+    const io = getNamespace();
 
     gameTimer = new Date();
     gameTimer.setSeconds(gameTimer.getSeconds() + 10);

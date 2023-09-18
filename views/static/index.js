@@ -98,7 +98,7 @@ function changeGameState(state, data) {
 
             const startingInterval = setInterval(function() {
                 const remainingSeconds = ((startingTime - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
-                console.log("remining", remainingSeconds);
+                console.log("remaining", remainingSeconds);
 
                 if(currentState != 'starting' || remainingSeconds <= 0) {
                     clearInterval(startingInterval)
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Notification
     notificationContainer = document.querySelector(".notification-container");
 
-    const socket = io();
+    const socket = io('/gameplay');
 
 
     contestantContainer = document.querySelector('.contestant-container');

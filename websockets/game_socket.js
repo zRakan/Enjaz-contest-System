@@ -1,29 +1,13 @@
-// Websocket [Socket.io]
-import { Server } from "socket.io";
+import * as game from '../game.js';
+import * as utils from '../utils.js';
 
+let gameNamespace;
+export default async function(io) {
+    console.log("Game socket init");
 
+    gameNamespace = io.of('/gameplay');
 
-// Import utils
-import * as game from "./game.js";
-import * as utils from "./utils.js";
-
-let websocket;
-export function startWebsocket(listener, engine) {
-    websocket = new Server(listener);
-    websocket.engine.use(engine); // Using express-session with socket.io
-
-
-    /*
-        Events: {
-            'enjaz:updating': [
-                { type: "connected_users", connected_users: Integer },
-                { type: "game_state", current_state: String }
-            ],
-
-            'enjaz:joined': { game_state: String, first_time: Boolean } 
-        }
-    */
-    websocket.on('connection', function(ws) {
+    gameNamespace.on('connection', function(ws) {
         const req = ws.request;
         const ID = req.session.id;
 
@@ -67,7 +51,7 @@ export function startWebsocket(listener, engine) {
             ws.emit('enjaz:joined', { game_state: game.getGameState(), first_time: true });
 
             // Websocket broadcast
-            websocket.emit('enjaz:updating', { type: "connected_users", connected_users: game.playerJoined(ID, { displayedName: utils.randomStr(8), name: NAME, sId: SID }) });
+            gameNamespace.emit('enjaz:updating', { type: "connected_users", connected_users: game.playerJoined(ID, { displayedName: utils.randomStr(8), name: NAME, sId: SID }) });
 
             console.log("Added contestant")
         });
@@ -77,15 +61,12 @@ export function startWebsocket(listener, engine) {
             if(!game.isPlayerJoined(ID)) return;
             
             console.log("Disconnected information", game.isPlayerJoined(ID));
-            websocket.emit('enjaz:updating', { type: "connected_users", connected_users: game.playerLeft(ID) });
+            gameNamespace.emit('enjaz:updating', { type: "connected_users", connected_users: game.playerLeft(ID) });
             console.log("[SOCKET] User Disconnected", ID);
         });*/
     });
+};
 
-
-    return websocket
-}
-
-export function getInstance() {
-    return websocket;
+export function getNamespace() {
+    return gameNamespace;
 }

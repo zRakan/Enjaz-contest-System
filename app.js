@@ -85,5 +85,6 @@ serverListener = app.listen(PORT, function() {
 });
 
 // Creating websocket
-import { startWebsocket } from "./websocket.js";
-const websocket = startWebsocket(serverListener, sessionMD);
+//import { startWebsocket } from "./websocket.js";
+import { default as startWebsocket }  from './websockets/initializer.js';
+startWebsocket(serverListener, sessionMD);
