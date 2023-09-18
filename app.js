@@ -31,7 +31,7 @@ app.use(express.static('views/static'))
 import * as game from "./game.js";
 
 app.get('/', function(req, res) {
-    if(game.getGameState() != 'waiting') return res.redirect('leaderboard');
+    if(game.getGameState() != 'waiting' && !game.isPlayerJoined(req.session.id)) return res.redirect('leaderboard');
 
     console.log("Game state", game.getGameState())
 
@@ -70,6 +70,8 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
 
     res.send("Good API");
     console.log(questions[questionId-1]);
+
+    game.startGame();
 });
 
 let serverListener;

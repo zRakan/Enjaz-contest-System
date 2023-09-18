@@ -37,6 +37,63 @@ function showNotification(message, status) {
     }, 5);
 }
 
+let contestantContainer;
+let currentState;
+let dynamicElement;
+function changeGameState(state) {
+    currentState = state;
+
+    switch(state) {
+        case "waiting":
+            if(dynamicElement) { // Check if element is existed
+                dynamicElement.remove(); // Remove current element
+                dynamicElement = null;
+            }
+        
+            dynamicElement = document.createElement('p');
+        
+            let dot = 1;
+            const waitingInterval = setInterval(function() {
+                if(currentState != 'waiting') {
+                    clearInterval(waitingInterval); // Destroy interval
+                    return
+                }
+
+                if(dot > 3) dot = 1;
+                dynamicElement.innerHTML = `قيد الإنتظار${'.'.repeat(dot)}`;
+                dot++;
+            }, 500);
+
+            contestantContainer.appendChild(dynamicElement);
+            break;
+        case 'starting':
+            console.log("Starting...");   
+
+            const startingTime = new Date();
+                  startingTime.setSeconds(startingTime.getSeconds() + 10);
+
+            const startingInterval = setInterval(function() {
+                const remainingSeconds = ((startingTime - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
+
+                if(currentState != 'starting' || remainingSeconds <= 0) {
+                    clearInterval(startingInterval)
+                    return;
+                };
+
+                dynamicElement.innerHTML = `بقي ${((startingTime - new Date()) / 1000) | 0} وتبدأ الجولة`
+            }, 500);
+
+            break;
+        case 'started':
+            if(dynamicElement) { // Check if element is existed
+                dynamicElement.remove(); // Remove current element
+                dynamicElement = null;
+            }
+
+            break;
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     // Notification
     notificationContainer = document.querySelector(".notification-container");
@@ -44,7 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const socket = io();
 
 
-    const contestantContainer = document.querySelector('.contestant-container');
+    contestantContainer = document.querySelector('.contestant-container');
     const connectedButton = document.querySelector('#contestant-submit');
     const connectedUsers = document.querySelector('.contestant-container > p');
 
@@ -84,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     // Client is connected successfully
-    let currentState;
     socket.on('enjaz:joined', function(data) {
         console.log(data);
         isConnected = true;
@@ -92,29 +148,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Remove all
         document.querySelectorAll('.contestant-container > :not(p)').forEach(e => e.remove());
 
-        currentState = data.game_state;
-
-        let dynamicElement;
-        switch(data.game_state) {
-            case "waiting":
-                if(dynamicElement) { // Check if element is existed
-                    dynamicElement.remove(); // Remove current element
-                    dynamicElement = null;
-                }
-            
-                dynamicElement = document.createElement('p');
-            
-                let dot = 1;
-                const interval = setInterval(function() {
-                    if(currentState != 'waiting') clearInterval(interval); // Destroy interval
-                    if(dot > 3) dot = 1;
-                    dynamicElement.innerHTML = `قيد الإنتظار${'.'.repeat(dot)}`;
-                    dot++;
-                }, 500);
-
-                contestantContainer.appendChild(dynamicElement);
-                break;
-        }
+        changeGameState(data.game_state);
 
         if(data.first_time) // Joined first time (Excluded re-join[refresh])
             showNotification("تم القبول", "success");
@@ -129,6 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 break;
             
             case 'game_state':
+                changeGameState(data.current_state);
                 break;
         }
     });

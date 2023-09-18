@@ -29,15 +29,19 @@ export function startWebsocket(listener, engine) {
 
         console.log('[SOCKET] User Connected', ID);
 
-        // is user already joined?
-        if(game.isPlayerJoined(ID)) ws.emit('enjaz:joined', { game_state: game.getGameState() });
-
         // Getting current connected users
         ws.emit('enjaz:updating', { type: "connected_users", connected_users: game.getNumberOfPlayers() });
+
+        // is user already joined?
+        if(game.isPlayerJoined(ID)) {
+            ws.join('contestant'); // Set client websocket as contestant
+            ws.emit('enjaz:joined', { game_state: game.getGameState() });
+        }
 
         // New contestant
         ws.on('enjaz:new-contestant', function(data) {
             if(game.isPlayerJoined(ID)) return;
+            ws.join('contestant'); // Set client websocket as contestant
 
             const NAME = data.name;
             const SID = data.sid;
@@ -72,4 +76,8 @@ export function startWebsocket(listener, engine) {
 
 
     return websocket
+}
+
+export function getInstance() {
+    return websocket;
 }
