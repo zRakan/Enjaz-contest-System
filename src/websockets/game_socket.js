@@ -18,6 +18,9 @@ export default async function(io) {
 
         // is user already joined?
         if(game.isPlayerJoined(ID)) {
+            // Update player socker
+            game.updatePlayerSocket(ID, ws);
+
             let joinPayload = { game_state: game.getGameState() };
 
             if(game.getGameState() == 'starting') // If game is starting, getting the starting timer
@@ -25,6 +28,8 @@ export default async function(io) {
 
             ws.join('contestant'); // Set client websocket as contestant
             ws.emit('enjaz:joined', joinPayload);
+
+            if(game.getGameState() == 'started') game.constructPlayerQuestion(ID);
         } else {
             if(game.getGameState() == 'waiting')
                 ws.emit('enjaz:updating', { type: 'game_state', current_state: 'not-started' });
@@ -51,9 +56,35 @@ export default async function(io) {
             ws.emit('enjaz:joined', { game_state: game.getGameState(), first_time: true });
 
             // Websocket broadcast
-            gameNamespace.emit('enjaz:updating', { type: "connected_users", connected_users: game.playerJoined(ID, { displayedName: utils.randomStr(8), name: NAME, sId: SID }) });
+            gameNamespace.emit('enjaz:updating', { type: "connected_users",
+                connected_users: game.playerJoined(ID, {
+                    session: ws,
+                    displayedName: utils.randomStr(8),
+                    name: NAME,
+                    sId: SID,
+
+                    questions: {},
+                    answers: {},
+
+                    points: 0
+                })
+            });
 
             console.log("Added contestant")
+        });
+
+        // New answer
+        ws.on('enjaz:answer', function(data, callback) {
+            if(!game.isPlayerJoined(ID)) return;
+            if(!data.id || !data.answer) {
+                console.log("[Socket-Validator] Disconnected client with bad input(s)", ws.id);
+                return ws.disconnect(true);
+            };
+
+            console.log("Answered");
+            callback({
+                good: game.playerAnswer(ID, { id: data.id, answer: data.answer })
+            });
         });
 
         // Websocket disconnected

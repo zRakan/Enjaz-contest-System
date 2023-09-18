@@ -24,6 +24,6 @@ export function randomStr(length) {
     return result;
 }
 
-export function sleep(ms) {
+export function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

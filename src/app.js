@@ -39,22 +39,6 @@ app.get('/', function(req, res) {
     res.render("index", { data: game.getNumberOfPlayers() });
 });
 
-const questions = [
-    {
-        '1+1': [2, 1],
-        '1+2': [3, 2],
-        '3+1': [4, 0],
-        '4+0': [4, 2]
-    },
-
-    {
-        '5+1': [6, 1],
-        '6+2': [8, 2],
-        '9+1': [10, 0],
-        '10+0': [10, 2]
-    },    
-]
-
 const API_KEY = 'RAKAN-33828438897517041749474368349544';
 function checkAuthorization(req, res, next) {
     const apiKey = req.headers["api_key"];
@@ -66,13 +50,11 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
     let questionId = req.params['question_id'];
     if(!questionId) res.sendStatus(403);
 
-    questionId = parseInt(questionId);
-    if(!questions[questionId-1]) return res.sendStatus(403);
+    questionId = parseInt(questionId) - 1;
+    if(!game.checkQuestionSet(questionId)) return res.sendStatus(403);
 
     res.send("Good API");
-    console.log(questions[questionId-1]);
-
-    game.startGame();
+    game.startGame(questionId);
 });
 
 app.post('/stop', checkAuthorization, async function(req, res) {

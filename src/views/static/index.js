@@ -1,3 +1,26 @@
+/* Helper functions */
+function shuffle(arr) {
+    const randomizer = Math.random();
+
+    // Shuffling by swaping via randomizer
+    if(randomizer >= 0.5) {
+        const temp = arr[0];
+        arr[0] = arr[1];
+        arr[1] = temp;
+    }
+}
+
+let handlers = {};
+function setEventHandler(element, id, evName, func) {
+    console.log(handlers);
+    
+    if(handlers[id])
+        element.removeEventListener(evName, handlers[id], true); // Remove old handler
+
+    handlers[id] = func;
+    element.addEventListener(evName, func, true);
+}
+
 /* Notification System */
 let notificationContainer;
 
@@ -39,12 +62,65 @@ function showNotification(message, status) {
 
 
 let isConnected = false;
+let isAnswered = false;
+
 let containerInput;
 let contestantContainer;
 let currentState;
 let dynamicElement;
+let questionElement;
+
+let startingTime;
+function getGameTimer() { return startingTime; }
+
+function createQuestion(title, options, questionId, timer) {
+    questionElement = document.createElement('div');
+    questionElement.setAttribute('id', 'question-container');
+
+    // Creating question title
+    const questionTitle = document.createElement('p');
+    questionTitle.innerHTML = title;
+    questionElement.appendChild(questionTitle);
+
+    // Creating options
+    for(let option of options) {
+        const btn = document.createElement('button');
+        btn.innerHTML = option;
+
+        questionElement.appendChild(btn);
+    }
+
+    // Cooldown
+    if(!timer) {
+        startingTime = new Date();
+        startingTime.setSeconds(startingTime.getSeconds() + 10);
+    } else startingTime = new Date(timer);
+
+    const cooldownText = document.createElement('p');
+    questionElement.appendChild(cooldownText);
+    const cooldownInterval = setInterval(function() {
+        const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
+        console.log("remaining ques", remainingSeconds);
+
+        if(currentState != 'started') {
+            clearInterval(cooldownInterval)
+            return;
+        };
+
+        cooldownText.innerHTML = `بقي ${remainingSeconds}`
+    }, 500);
+
+
+    contestantContainer.appendChild(questionElement);
+}
+
 function changeGameState(state, data) {
     currentState = state;
+
+    if(state != 'started' && questionElement) {
+        questionElement.remove();
+        questionElement = null;
+    }
 
     switch(state) {
         case 'not-started':
@@ -88,8 +164,6 @@ function changeGameState(state, data) {
             }
 
             console.log("Starting...");   
-
-            let startingTime;
 
             if(!data || !data.current_timer) {
                 startingTime = new Date();
@@ -212,6 +286,49 @@ document.addEventListener("DOMContentLoaded", function() {
                 changeGameState(data.current_state);
                 break;
         }
+    });
+
+    socket.on('enjaz:question', function(data) {
+        isAnswered = false;
+
+        console.log('New question', data);
+
+        // Shuffle options [Not worth it to shuffle it in backend]
+        shuffle(data.options);
+
+        if(!questionElement)
+            createQuestion(data.title, data.options, data.id, data.current_timer);
+        else startingTime = new Date(data.current_timer); // Update time only if question created
+
+        questionElement.classList.remove('hidden');
+
+        const elements = questionElement.children;
+        elements[0].innerHTML = data.title; // Set question title
+
+        for(let option in data.options) {
+            option = parseInt(option);
+            const el = elements[option+1];
+
+            el.innerHTML = data.options[option];
+            setEventHandler(el, option, 'click', function() {
+                if(isAnswered) return showNotification('الرجاء الإنتظار', 'warning');
+                isAnswered = true;
+               
+                questionElement.classList.add('hidden');
+                
+               
+                showNotification('تم إرسال اجابتك')
+                socket.emit('enjaz:answer', { id: data.id, answer: el.innerHTML }, function(resp) {
+                    if(resp.good)
+                        showNotification('جوابك صحيح', 'success');
+                    else showNotification('جوابك خاطئ', 'failed');
+                });
+            });
+
+            console.log(el.innerHTML);
+        }
+        elements[1].innerHTML = data.options[0]; // Set first option
+        elements[2].innerHTML = data.options[1]; // Set second option
     });
 
 
