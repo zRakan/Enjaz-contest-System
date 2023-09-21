@@ -18,11 +18,29 @@ html, body {
     margin: 0;
 }
 
+button, input {
+    font-family: 'montaser';
+
+    outline: none;
+    border: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* Prevent scrolling by x-axis */
 body {
-    background-image: url('../assets/bg.jpg');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100% 100%;
+    overflow-x: hidden;
+}
+
+.img-bg {
+    position: fixed; 
+    top: 0; 
+    left: 0;
+
+    width: 100%;
+    height: 100%;
 }
 
 /* 
@@ -61,31 +79,70 @@ header > h1 {
 /* Header Logos */
 .logos {
     position: relative;
-    height: 200px;
-
-    width: fit-content;
-
-    top: 5px;
+    height: 250px;
+    
+    top: 70px;
     left: 5px;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
 }
 
-.logos > img {
-    object-fit: contain;
+.logos img:nth-child(2) {
+    width: 170px;
+    height: 200px;
 }
 
-@media screen and (max-width:768px) {
+.logos img:nth-child(1) {
+    height: 93px;
+    width: 240px;
+}
+
+@media screen and (max-height:760px) {
+
     .logos {
-        left: 0px;
-        height: 80px;
+        top: 18px;
+        left: 5px;
     }
 
-    .logos > img {
-        max-width: 80px;
+    .logos img:nth-child(1) {
+        height: 70px;
+        width: 160px;
+    }
+
+    .logos img:nth-child(2) {
+        width: 150px;
+        height: 160px;
     }
 }
+
+@media screen and (max-height:600px) {
+    .logos {
+        top: 7px;
+        left: 5px;
+    }
+
+    .logos img:nth-child(1) {
+        height: 60px;
+        width: 145px;
+    }
+
+    .logos img:nth-child(2) {
+        width: 140px;
+        height: 145px;
+    }
+}
+
+@media screen and (min-height:840px) {
+    .logos {
+        top: 110px;
+    }
+}
+
+
 
 
 /*
@@ -95,17 +152,25 @@ header > h1 {
 /* Contestant Container */
 .contestant-container {
     position: absolute;
+    width: 100%;
 
-    top: 50%;
+
+    top: 40%;
     left: 50%;
 
-    transform: translate(-50%, -50%);
+    transform: translate(-50%);
 
     display: flex;
     flex-direction: column;
-
     justify-content: center;
     align-items: center;
+}
+
+.contestant-container > p {
+    text-align: center;
+
+    color: #144f43;
+    font-size: 16px;
 }
 
 .hidden {
@@ -115,41 +180,58 @@ header > h1 {
 #start-game {
     display: flex;
     flex-direction: column;
-
     align-items: center;
+    width: 100%;
 }
 
-.contestant-container > p {
+#number_contestants {
     text-align: center;
 
     color: #144f43;
-    font-size: 5vw;
+    font-size: 20px;
 }
 
 .contestant-input {
-    font-family: 'montaser';
+    color: #767676;
 
-    background-color: #144f43;
-    color: #ebc53a;
+    height: 45px;
+
+    width: 70%;
+    max-width: 350px;
     
-    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 50px;
 
-    height: 30px;
-    border: none;
+    text-indent: 35px;
 
-    margin-bottom: 5px;
+}
+
+.contestant-input::placeholder {
+    color: rgb(118, 118, 118);
+    opacity: 0.5;
+}
+
+#start-game input {
+    background: url(../assets/name-icon.png) rgb(248, 248, 248) no-repeat right;
+    background-size: 20px;
+    background-position-x: 97%;
+}
+
+#start-game input:nth-child(2) { /* Change icon of second input */
+    background-image: url(../assets/id-icon.png);
 }
 
 #contestant-submit {
-    font-family: 'montaser';
+    font-size: 17px;
 
-    width: 60px;
-    height: 40px;
+    width: 166px;
+    height: 50px;
 
-    color: #ebc53a;
-    background-color: #144f43;
-    border: none;
-    border-radius: 30px;
+    color: white;
+    border-radius: 50px;
+    background-color: #357a4d;
+    margin-top: 15px;
+    box-shadow: 0px 6px 20px 1px #0000005f;
 }
 
 /*
@@ -160,8 +242,8 @@ footer {
     position: absolute;
     width: 100%;
 
-    background-color: #144f43;
-    border-radius: 80px 80px 0px 0px;
+    /* background-color: #144f43;
+    border-radius: 80px 80px 0px 0px; */
 
 
     bottom: 0%;
@@ -171,25 +253,27 @@ footer {
     justify-content: center;
 }
 
-footer > p {
-    font-size: 40px;
+footer p {
+    font-size: 15px;
 
     position: relative;
-    color: #ebc53a;
+    color: #357a4d;
 }
 
-@media screen and (max-width:768px) {
-    footer > p {
-        font-size: 5vw;
-    }
+footer p:nth-child(2) {
+    font-size: 23px;
+    margin-right: 5px;
 }
-
 
 
 /* Notification System */
 .notification-container {
     direction: ltr;
-    position: fixed;
+
+    position: absolute;
+    
+    left: 5%;
+    top: 10%;
 
     width: 60%;
 
@@ -202,7 +286,7 @@ footer > p {
 @media screen and (min-width: 720px) {
     .notification-container {
         width: 350px;
-    }    
+    }
 }
 
 #notification-message {
@@ -217,9 +301,10 @@ footer > p {
 
     font-size: 16px;
 
-    left: -200%; /* To: left: 0%
+    left: -100%;
+    /* To: left: 0%
     /* Transition */
-        transition: left 0.5s linear;
+    transition: left 0.5s linear;
 }
 
 /* SVG Notification */
@@ -236,14 +321,15 @@ footer > p {
 #notification-message > span {
     position: absolute;
 
+    top: 20%;
+    right: 10px;
+
     direction: rtl;
-    font-family: 'montaser';    
+
+    font-family: 'montaser';
     font-size: 14px;
 
     width: 70%;
-
-    right: 10px;
-    top: 20%;
 }
 
 
@@ -253,6 +339,7 @@ footer > p {
     background-color: #EAF7EE;
     border-color: #3FBD63;
 }
+
 #notification-message.success > svg {
     color: #3FBD63;
 }
@@ -281,37 +368,44 @@ footer > p {
 /* Question container */
 #question-container {
     display: flex;
-
+    width: 50%;
+    margin-top: 90px;
     align-items: center;
     flex-direction: column;
 }
 
-#question-container > p {
+#question-container p:nth-child(1) {
     color: #144f43;
-    font-size: 5vw;
+    font-size: 25px;
+}
+
+#question-container #time {
+    color: #144f43;
+    font-size: 16px;
 }
 
 #question-container button {
-    background-color: #144f43;
-    border: none;
+    background-color: #ffffff;
     border-radius: 10px;
-
-    color: #ebc53a;
-
+    color: #357a4d;
     width: 100%;
-    height: 50px;
-
+    height: 40px;
     margin-bottom: 15px;
+    max-width: 300px;
+    font-size: 20px;
 }
+
+
+/* Question System */
 
 #question-container button:last-of-type {
     margin-bottom: 0px;
 }
 
 #question-container > button:hover {
-    background-color: #1f947c;
+    background-color: #f3f3f3;
 }
 
 #question-container > button:focus {
-    background-color: #1f947c;
+    background-color: #f3f3f3;
 }

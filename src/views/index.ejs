@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Enjaz contest</title>
 
-    <link rel="stylesheet" href="styles/index.css">
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Enjaz contest</title>
 
-  <body>
-    <header>
-      <!-- Logos -->
-      <div class="logos">
-        <img id="imamu-logo" src="/assets/imamu.png">
-        <img id="enjaz-logo" src="/assets/enjaz.png">
-      </div>
+  <link rel="stylesheet" href="styles/index.css">
+</head>
 
-      <!-- Title -->
-      <h1>فعالية اليوم الوطني<br>نادي إنجاز</h1>
-    </header>
+<body>
+  <img src="/assets/background_enjaz.png" class="img-bg"> <!-- Background -->
 
+  <header>
+    <!-- Logos -->
 
-    <!-- Contestant Container -->
-    <div class="contestant-container">
-      <p>عدد المشاركين: <%= data %></p>
-
-      <div id="start-game">
-        <input type="text" class="contestant-input" id="contestant-name" placeholder="اسمك">
-        <input type="text" class="contestant-input" id="contestant-id" placeholder="رقمك الجامعي" maxlength="9">
-
-        <button id="contestant-submit">الدخول</button>
-      </div>
+    <div class="logos">
+      <img id="imamu-logo" src="assets/two_logos.png">
+      <img id="imamu-logo" src="assets/logo_enjaz.png">
     </div>
 
+    <!-- Title -->
+    <!-- <h1>فعالية اليوم الوطني<br>نادي إنجاز</h1> -->
 
-    <!-- Notifications -->
-    <div class="notification-container"></div>
+  </header>
 
 
-    <footer>
-      <p>صُنع بإتقان من قِبل نادي إنجاز</p>
-    </footer>
+  <!-- Contestant Container -->
+  <div class="contestant-container">
+    <p id="number_contestants">عدد المشاركين: <%= data %></p>
 
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <script src="index.js"></script>
-  </body>
+
+
+    <div id="start-game">
+      <input type="text" class="contestant-input" id="contestant-name" placeholder="اسمك">
+      <input type="text" class="contestant-input" id="contestant-id" placeholder="رقمك الجامعي" maxlength="9">
+
+      <button id="contestant-submit">الدخول</button>
+    </div>
+  </div>
+
+  <footer>
+    <p> بُرمج بحب من قبل إنجاز</p>
+    <p>&hearts;&#xFE0E;
+  </footer>
+
+  <!-- Notifications -->
+  <div class="notification-container"></div>
+
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="index.js"></script>
+</body>
+
 </html>

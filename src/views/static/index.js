@@ -48,10 +48,10 @@ function showNotification(message, status) {
 
     notificationContainer.appendChild(notificationElement);
     setTimeout(function() {
-        notificationElement.style.left = '-50%';
+        notificationElement.style.left = '0%';
 
         setTimeout(function() {
-            notificationElement.style.left = '-200%';
+            notificationElement.style.left = '-150%';
 
             setTimeout(function() {
                 notificationElement.remove();
@@ -73,7 +73,7 @@ let questionElement;
 let startingTime;
 function getGameTimer() { return startingTime; }
 
-function createQuestion(title, options, questionId, timer) {
+function createQuestion(title, options, timer) {
     questionElement = document.createElement('div');
     questionElement.setAttribute('id', 'question-container');
 
@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function() {
         shuffle(data.options);
 
         if(!questionElement)
-            createQuestion(data.title, data.options, data.id, data.current_timer);
+            createQuestion(data.title, data.options, data.current_timer);
         else startingTime = new Date(data.current_timer); // Update time only if question created
 
         questionElement.classList.remove('hidden');
