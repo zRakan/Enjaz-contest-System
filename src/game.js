@@ -73,13 +73,28 @@ function nextQuestion(questionSet) {
 }
 
 export function constructPlayerQuestion(playerId) {
-    const playerQuestions = playersConnected[playerId].questions[getGameQuestion()];
-    playersConnected[playerId].session.emit('enjaz:question', {
-        title: playerQuestions.title,
-        options: playerQuestions.options,
-        id: playerQuestions.id,
+    const currentQuestion = getGameQuestion();
+
+    const playerData = playersConnected[playerId]
+    const playerQuestions = playerData.questions[currentQuestion];
+    
+    let payload = {
         current_timer: getGameTimer()
-    });
+    };
+
+    if(!playerData.answers[playerQuestions.id]) { // Check if current question is answered or not for specified user
+        // Push player questions data
+        payload = { ...payload,
+            title: playerQuestions.title,
+            options: playerQuestions.options,
+            id: playerQuestions.id,    
+        }
+    }
+
+    // Send to client
+    console.log("Current payload", payload);
+    console.log('Player answers', playerData.answers);
+    playersConnected[playerId].session.emit('enjaz:question', payload);
 }
 
 export function startGame(questionSet) {
@@ -121,9 +136,8 @@ export function startGame(questionSet) {
             gameTimer.setSeconds(gameTimer.getSeconds() + 10);
 
             // Send questions to clients
-            for(let playerId in playersConnected) {
+            for(let playerId in playersConnected)
                 constructPlayerQuestion(playerId);
-            }
 
             return run;
         }(), 10000);
@@ -179,11 +193,11 @@ function playerQuestionExists(playerQuestions, id) {
 export function playerAnswer(id, data) {
     const playerData = playersConnected[id];
 
-    const question = data.id;
+    const question = parseInt(data.id);
     const answer = data.answer;
 
     if(playerQuestionExists(playerData.questions, question)) { // Check if question id is in player object
-        if(!playerData.answers[question]) { // Check if question is answered before or not
+        if(question && !playerData.answers[question]) { // Check if question is answered before or not
             playerData.answers[question] = true; // Indicate this question has been answered
         
             if(answer == answers[question]) {

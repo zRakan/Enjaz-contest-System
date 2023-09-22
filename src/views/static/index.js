@@ -69,9 +69,37 @@ let contestantContainer;
 let currentState;
 let dynamicElement;
 let questionElement;
+let cooldownText;
 
 let startingTime;
 function getGameTimer() { return startingTime; }
+
+function setGameTimer(timer) {
+    if(cooldownText) cooldownText.remove(); // Remove old element
+
+    // Cooldown
+    if(!timer) {
+        startingTime = new Date();
+        startingTime.setSeconds(startingTime.getSeconds() + 10);
+    } else startingTime = new Date(timer);
+
+    cooldownText = document.createElement('p');
+    cooldownText.setAttribute("id", "time");
+
+    const cooldownInterval = setInterval(function() {
+        const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
+        console.log("remaining ques", remainingSeconds);
+
+        if(currentState != 'started') {
+            clearInterval(cooldownInterval)
+            return;
+        };
+
+        cooldownText.innerHTML = `بقي ${remainingSeconds}`
+    }, 500);
+
+    contestantContainer.appendChild(cooldownText);
+}
 
 function createQuestion(title, options, timer) {
     questionElement = document.createElement('div');
@@ -90,28 +118,10 @@ function createQuestion(title, options, timer) {
         questionElement.appendChild(btn);
     }
 
-    // Cooldown
-    if(!timer) {
-        startingTime = new Date();
-        startingTime.setSeconds(startingTime.getSeconds() + 10);
-    } else startingTime = new Date(timer);
-
-    const cooldownText = document.createElement('p');
-    questionElement.appendChild(cooldownText);
-    const cooldownInterval = setInterval(function() {
-        const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
-        console.log("remaining ques", remainingSeconds);
-
-        if(currentState != 'started') {
-            clearInterval(cooldownInterval)
-            return;
-        };
-
-        cooldownText.innerHTML = `بقي ${remainingSeconds}`
-    }, 500);
-
-
     contestantContainer.appendChild(questionElement);
+
+    // Cooldown
+    setGameTimer(timer);
 }
 
 function changeGameState(state, data) {
@@ -120,6 +130,10 @@ function changeGameState(state, data) {
     if(state != 'started' && questionElement) {
         questionElement.remove();
         questionElement = null;
+
+        // Cooldown removal
+        cooldownText.remove();
+        cooldownText = null;
     }
 
     switch(state) {
@@ -289,46 +303,51 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     socket.on('enjaz:question', function(data) {
+        const ignoreQuestion = data.title ? false: true; // Don't create question if it's answered
+        console.log('Question state', ignoreQuestion);
+
         isAnswered = false;
 
         console.log('New question', data);
 
         // Shuffle options [Not worth it to shuffle it in backend]
-        shuffle(data.options);
+        !ignoreQuestion && shuffle(data.options);
 
-        if(!questionElement)
+        if(!questionElement && !ignoreQuestion)
             createQuestion(data.title, data.options, data.current_timer);
         else startingTime = new Date(data.current_timer); // Update time only if question created
 
-        questionElement.classList.remove('hidden');
+        if(!ignoreQuestion) {
+            questionElement.classList.remove('hidden');
+            const elements = questionElement.children;
+            elements[0].innerHTML = data.title; // Set question title
 
-        const elements = questionElement.children;
-        elements[0].innerHTML = data.title; // Set question title
+            for(let option in data.options) {
+                option = parseInt(option);
+                const el = elements[option+1];
 
-        for(let option in data.options) {
-            option = parseInt(option);
-            const el = elements[option+1];
-
-            el.innerHTML = data.options[option];
-            setEventHandler(el, option, 'click', function() {
-                if(isAnswered) return showNotification('الرجاء الإنتظار', 'warning');
-                isAnswered = true;
-               
-                questionElement.classList.add('hidden');
+                el.innerHTML = data.options[option];
+                setEventHandler(el, option, 'click', function() {
+                    if(isAnswered) return showNotification('الرجاء الإنتظار', 'warning');
+                    isAnswered = true;
                 
-               
-                showNotification('تم إرسال اجابتك')
-                socket.emit('enjaz:answer', { id: data.id, answer: el.innerHTML }, function(resp) {
-                    if(resp.good)
-                        showNotification('جوابك صحيح', 'success');
-                    else showNotification('جوابك خاطئ', 'failed');
+                    questionElement.classList.add('hidden');
+                    
+                
+                    showNotification('تم إرسال اجابتك')
+                    socket.emit('enjaz:answer', { id: data.id, answer: el.innerHTML }, function(resp) {
+                        if(resp.good)
+                            showNotification('جوابك صحيح', 'success');
+                        else showNotification('جوابك خاطئ', 'failed');
+                    });
                 });
-            });
 
-            console.log(el.innerHTML);
-        }
-        elements[1].innerHTML = data.options[0]; // Set first option
-        elements[2].innerHTML = data.options[1]; // Set second option
+                console.log(el.innerHTML);
+            }
+            elements[1].innerHTML = data.options[0]; // Set first option
+            elements[2].innerHTML = data.options[1]; // Set second option
+        } else
+            setGameTimer(data.current_timer);
     });
 
 
