@@ -42,13 +42,12 @@ export function checkQuestionSet(setNumber) {
 }
 
 function shuffle(questionSet) {
-    let array = questions[questionSet];
+    let array = [...questions[questionSet]];
 
-    let currentIndex = array.length,  randomIndex;
+    let currentIndex = array.length, randomIndex;
 
     // While there remain elements to shuffle.
     while (currentIndex > 0) {
-  
       // Pick a remaining element.
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex--;
@@ -57,7 +56,7 @@ function shuffle(questionSet) {
       [array[currentIndex], array[randomIndex]] = [
         array[randomIndex], array[currentIndex]];
     }
-  
+
     return array;
 }
 
@@ -77,7 +76,7 @@ export function constructPlayerQuestion(playerId) {
 
     const playerData = playersConnected[playerId]
     const playerQuestions = playerData.questions[currentQuestion];
-    
+
     let payload = {
         current_timer: getGameTimer()
     };
@@ -92,21 +91,16 @@ export function constructPlayerQuestion(playerId) {
     }
 
     // Send to client
-    console.log("Current payload", payload);
-    console.log('Player answers', playerData.answers);
     playersConnected[playerId].session.emit('enjaz:question', payload);
 }
 
 export function startGame(questionSet) {
     const io = getNamespace();
 
+    // Shuffling question set for each player
     for(let playerId in playersConnected) {
-        const player = playersConnected[playerId];
-        
-        const shuffledQuestions = shuffle(questionSet); // Shuffle question list
-        player.questions = shuffledQuestions;
-
-        console.log(player.questions);
+        const player = playersConnected[playerId];        
+        player.questions = shuffle(questionSet);
     }
 
     gameTimer = new Date();
@@ -127,7 +121,6 @@ export function startGame(questionSet) {
 
         const gameInterval = setInterval(function run() {
             if(getGameState() != 'started') return clearInterval(gameInterval);
-            console.log("Started questions");
             // Next question
             nextQuestion(questionSet);
 
@@ -203,8 +196,6 @@ export function playerAnswer(id, data) {
             if(answer == answers[question]) {
                 const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
                 playerData.points += 1 + (remainingSeconds / 10);
-
-                console.log("Correct answer finished at", remainingSeconds, playerData.points);
                 return true;
             }
         }
