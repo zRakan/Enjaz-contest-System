@@ -1,10 +1,16 @@
-let leaderboard_socket;
+import * as leaderboard from "../leaderboard.js";
+
+let leaderboardNamespace;
 export default function(io) {
     console.log("leaderboard socket init");
 
-    leaderboard_socket = io.of('/leaderboard');
+    leaderboardNamespace = io.of('/leaderboard');
+
+    leaderboardNamespace.on('connection', function(ws) {
+
+    });
 }
 
 export function getNamespace() {
-    return leaderboard_socket;
+    return leaderboardNamespace;
 }

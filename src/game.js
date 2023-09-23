@@ -1,7 +1,5 @@
 import { getNamespace } from "./websockets/game_socket.js";
 
-import { wait } from './utils.js';
-
 // Matchmaking information
 let gameState = 'waiting'; // [waiting, starting, started]
 
@@ -178,30 +176,12 @@ export function changeGameState(state, io) {
 }
 
 // Player information
-function playerQuestionExists(playerQuestions, id) {
-    for(let question of playerQuestions) if(question.id == id) return true;
-    return false;
+export function getNumberOfPlayers() {
+    return playersCounter;
 }
 
-export function playerAnswer(id, data) {
-    const playerData = playersConnected[id];
-
-    const question = parseInt(data.id);
-    const answer = data.answer;
-
-    if(playerQuestionExists(playerData.questions, question)) { // Check if question id is in player object
-        if(question && !playerData.answers[question]) { // Check if question is answered before or not
-            playerData.answers[question] = true; // Indicate this question has been answered
-        
-            if(answer == answers[question]) {
-                const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
-                playerData.points += 1 + (remainingSeconds / 10);
-                return true;
-            }
-        }
-    }
-
-    return false;
+export function getPlayers() {
+    return playersConnected;
 }
 
 export function updatePlayerSocket(id, ws) {
@@ -228,6 +208,30 @@ export function playerLeft(id) {
     return --playersCounter;
 }
 
-export function getNumberOfPlayers() {
-    return playersCounter;
+
+function playerQuestionExists(playerQuestions, id) {
+    for(let question of playerQuestions) if(question.id == id) return true;
+    return false;
+}
+
+export function playerAnswer(id, data) {
+    const playerData = playersConnected[id];
+
+    const question = parseInt(data.id);
+    const answer = data.answer;
+
+    if(playerQuestionExists(playerData.questions, question)) { // Check if question id is in player object
+        if(question && !playerData.answers[question]) { // Check if question is answered before or not
+            playerData.answers[question] = true; // Indicate this question has been answered
+        
+            if(answer == answers[question]) {
+                const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
+                console.log(remainingSeconds, 1+(remainingSeconds/10))
+                playerData.points += parseFloat((1 + (remainingSeconds / 10)).toPrecision(3));
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
