@@ -39,6 +39,14 @@ app.get('/', function(req, res) {
     res.render("index", { data: game.getNumberOfPlayers() });
 });
 
+app.get('/leaderboard', function(req, res) {
+    res.render('leaderboard', { 
+        data: {
+            state: game.getGameState()
+        }
+    });
+});
+
 const API_KEY = 'RAKAN-33828438897517041749474368349544';
 function checkAuthorization(req, res, next) {
     const apiKey = req.headers["api_key"];

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Enjaz contest</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="/styles/leaderboard.css" />
+</head>
+
+<body>
+    <header>
+        <!-- Logos -->
+        <div class="logos">
+            <img id="imamu-logo" src="assets/three_logo.png" alt="">
+        </div>
+    </header>
+
+    <!-- Contestant Container -->
+    <div class="contestant-contaner">
+        <div id="start-ame">
+            <div id="box">
+                <div id="information_leaderborad">
+                    <h2>المركز</h2>
+                    <h2>الإسم</h2>
+                    <h2>النقاط</h2>
+                </div>
+
+                <% if(data.state == 'waiting') { %>
+                    <p id="not-started-yet">
+                        لم تبدأ المسابقة بعد
+                    </p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Notifications -->
+    <div class="notification-container"></div>
+
+    <footer>
+        <p> بُرمج بحب من قبل إنجاز</p>
+        <p>&hearts;&#xFE0E;
+      </footer>
+    
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+
+    <script> // GLOBALS
+        const GLOBALS = <%-JSON.stringify(data)%>;
+    </script>
+
+    <script src="/leaderboard.js"></script>
+</body>
+
+</html>
