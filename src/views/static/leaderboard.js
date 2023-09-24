@@ -41,6 +41,7 @@ function createContestant(name, points, pos) {
 
 const notStarted = document.createElement('p');
       notStarted.setAttribute('id', 'not-started-yet');
+      notStarted.innerHTML = "لم تبدأ المسابقة بعد";
 
 document.addEventListener("DOMContentLoaded", function() {
     leaderboardContainer = document.querySelector('#box');
@@ -60,13 +61,16 @@ document.addEventListener("DOMContentLoaded", function() {
         const Value = data.value;
 
         switch(Type) {
-            case 'state':
+            case 'get_id':
                 data.id && (id = data.id);
-                if(Value != 'waiting'){
+                break;
+            case 'state':
+                if(Value != 'waiting') {
                     const waitingDiv = document.querySelector('#not-started-yet');
-
                     waitingDiv && waitingDiv.remove(); // Remove
                 } else {
+                    console.log(childs);
+
                     // Remove all contestants
                     for(let i = 1; i < childs.length; i++)
                         childs[i].remove();
@@ -78,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
             case 'leaderboard':
                 for(let i = 0; i < Value.length; i++) {
                     const currentElement = childs[i+1];
+                    console.log(currentElement);
 
                     const currentName = Value[i].name;
                     const currentPoints = Value[i].points;
@@ -93,11 +98,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     const [pos, points] = currentElement.querySelectorAll('h3');
 
                     const name = currentElement.querySelector('h4');
+                    console.log(name, pos, points);
 
                     // If position of player has changed
-                    if(name.innerHTML != currentName) {
-                        console.log("Overwrite pos");
-                    }
+                        // Format the name and remove special characters
+                        let formattedName = name.innerHTML;
+                            formattedName = formattedName.replace(' (أنت)', '') // Remove 'You' suffix
+
+                        if(formattedName != currentName) {
+                            console.log("Overwrite pos");
+                        }
 
                     name.innerHTML = currentName + (currentId == id ? " (أنت)" : "");
                     points.innerHTML = currentPoints;

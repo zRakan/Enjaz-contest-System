@@ -112,7 +112,8 @@ export function startGame(questionSet) {
 
     io.except('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-joined' });
     io.except('contestant').disconnectSockets(); // Disconnect all websockets of non-participants
-    leaderboard_socket().emit('enjaz:leaderboard:getid');
+    
+    leaderboard_socket().emit('enjaz:leaderboard:getid'); // Tell all users from leaderboard socket to request their IDs
 
 
     // Start game after 10 seconds

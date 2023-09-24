@@ -21,10 +21,10 @@ export default function(io) {
         ws.emit('enjaz:leaderboard:updating', payload);
 
         ws.on('enjaz:leaderboard:getid', function() {
-            if(game.isPlayerJoined(ID))
-                payload["id"] = game.getPlayerId(ID);
+            let pLoad = { type: 'get_id' }; 
+            game.isPlayerJoined(ID) && (pLoad.id = game.getPlayerId(ID)); // Add ID if player joined
 
-            ws.emit('enjaz:leaderboard:updating', payload);
+            ws.emit('enjaz:leaderboard:updating', pLoad);
         })
 
         if(game.getGameState() != 'waiting')
