@@ -1,5 +1,7 @@
 import { getNamespace } from "./websockets/game_socket.js";
 
+import { updateTopPlayers } from "./leaderboard.js";
+
 // Matchmaking information
 let gameState = 'waiting'; // [waiting, starting, started]
 
@@ -130,6 +132,7 @@ export function startGame(questionSet) {
             for(let playerId in playersConnected)
                 constructPlayerQuestion(playerId);
 
+            updateTopPlayers();
             return run;
         }(), 10000);
     }, 10000);

@@ -28,8 +28,9 @@ app.set('view engine', 'ejs');
 app.set('views', 'src/views'); // Set views folder
 app.use(express.static('./src/views/static')) // Set static folder
 
-// Game state
+// Game state & Leaderboard
 import * as game from "./game.js";
+import * as leaderboard from "./leaderboard.js";
 
 app.get('/', function(req, res) {
     if(game.getGameState() != 'waiting' && !game.isPlayerJoined(req.session.id)) return res.redirect('leaderboard');
@@ -63,11 +64,15 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
 
     res.send("Good API");
     game.startGame(questionId);
+
+    // Update leaderboard state
+    leaderboard.updateLeaderboard('started');
 });
 
 app.post('/stop', checkAuthorization, async function(req, res) {
     res.send("Good API");
     await game.stopGame();
+    leaderboard.updateLeaderboard('waiting');
 });
 
 let serverListener;

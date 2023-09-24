@@ -1,5 +1,7 @@
 import * as leaderboard from "../leaderboard.js";
 
+import * as game from '../game.js';
+
 
 let leaderboardNamespace;
 export default function(io) {
@@ -10,7 +12,12 @@ export default function(io) {
     leaderboardNamespace.on('connection', function(ws) {
         const req = ws.request;
         const ID = req.session.id;
-        
+
+        ws.emit('enjaz:leaderboard:updating', { type: 'state', value: game.getGameState() });
+
+        if(game.getGameState() != 'waiting')
+            ws.emit('enjaz:leaderboard:updating', { type: 'leaderboard', value: leaderboard.getTopPlayers() })
+
         console.log("[SOCKET] User Connected", ID);
     });
 }
