@@ -2,6 +2,8 @@ import { getNamespace } from "./websockets/game_socket.js";
 
 import { updateTopPlayers } from "./leaderboard.js";
 
+import { getNamespace as leaderboard_socket } from "./websockets/leaderboard_socket.js";
+
 // Matchmaking information
 let gameState = 'waiting'; // [waiting, starting, started]
 
@@ -110,7 +112,7 @@ export function startGame(questionSet) {
 
     io.except('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-joined' });
     io.except('contestant').disconnectSockets(); // Disconnect all websockets of non-participants
-
+    leaderboard_socket().emit('enjaz:leaderboard:getid');
 
 
     // Start game after 10 seconds
@@ -194,6 +196,11 @@ export function updatePlayerSocket(id, ws) {
         playersConnected[id].session = ws
         console.log("Updated socket")
     }
+}
+
+
+export function getPlayerId(id){
+    return playersConnected[id].id;
 }
 
 export function isPlayerJoined(id) {

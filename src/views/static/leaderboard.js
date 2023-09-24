@@ -3,6 +3,7 @@ const contestantDiv = document.createElement('div');
       contestantDiv.setAttribute('id', 'students_contestant');
 
 let leaderboardContainer;
+let id;
 
 /*
     <div class="animate__animated" id="students_contestant">
@@ -46,6 +47,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const socket = io('/leaderboard');
 
+    socket.on('enjaz:leaderboard:getid', function() {
+        socket.emit('enjaz:leaderboard:getid'); 
+    });
 
     socket.on('enjaz:leaderboard:updating', function(data) {
         console.log(data);
@@ -57,6 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         switch(Type) {
             case 'state':
+                data.id && (id = data.id);
                 if(Value != 'waiting'){
                     const waitingDiv = document.querySelector('#not-started-yet');
 
@@ -76,10 +81,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     const currentName = Value[i].name;
                     const currentPoints = Value[i].points;
+                    const currentId = Value[i].id;
 
                     // If new contestant (Not overwriting)
                     if(!currentElement) {
-                        createContestant(currentName, currentPoints, i+1);
+                        createContestant(currentName + (currentId == id ? " (أنت)" : ""), currentPoints, i+1);
                         continue;
                     }
 
@@ -93,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         console.log("Overwrite pos");
                     }
 
-                    name.innerHTML = currentName;
+                    name.innerHTML = currentName + (currentId == id ? " (أنت)" : "");
                     points.innerHTML = currentPoints;
                     pos.innerHTML = i+1;
                 }

@@ -19,7 +19,8 @@ export function updateTopPlayers()  {
     for(let player in players)
         sortedPlayers.push({
             name: players[player].name,
-            points: players[player].points
+            points: players[player].points,
+            id: players[player].id
         });
 
     

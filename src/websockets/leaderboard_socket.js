@@ -13,7 +13,19 @@ export default function(io) {
         const req = ws.request;
         const ID = req.session.id;
 
-        ws.emit('enjaz:leaderboard:updating', { type: 'state', value: game.getGameState() });
+        let payload = { type: 'state', value: game.getGameState()};
+
+        if(game.isPlayerJoined(ID))
+            payload["id"] = game.getPlayerId(ID);
+
+        ws.emit('enjaz:leaderboard:updating', payload);
+
+        ws.on('enjaz:leaderboard:getid', function() {
+            if(game.isPlayerJoined(ID))
+                payload["id"] = game.getPlayerId(ID);
+
+            ws.emit('enjaz:leaderboard:updating', payload);
+        })
 
         if(game.getGameState() != 'waiting')
             ws.emit('enjaz:leaderboard:updating', { type: 'leaderboard', value: leaderboard.getTopPlayers() })

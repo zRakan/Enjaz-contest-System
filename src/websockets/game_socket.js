@@ -59,7 +59,7 @@ export default async function(io) {
             gameNamespace.emit('enjaz:updating', { type: "connected_users",
                 connected_users: game.playerJoined(ID, {
                     session: ws,
-                    displayedName: utils.randomStr(8),
+                    id: utils.randomStr(16),
                     name: NAME,
                     sId: SID,
 
