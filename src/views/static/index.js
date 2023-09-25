@@ -72,6 +72,8 @@ let questionElement;
 let cooldownText;
 
 let startingTime;
+const formatter = new Intl.RelativeTimeFormat('ar');
+
 function getGameTimer() { return startingTime; }
 
 function setGameTimer(timer) {
@@ -95,7 +97,7 @@ function setGameTimer(timer) {
             return;
         };
 
-        cooldownText.innerHTML = `بقي ${remainingSeconds}`
+        cooldownText.innerHTML = `${formatter.format(remainingSeconds, 'second')} وينتهي السؤال`
     }, 500);
 
     contestantContainer.appendChild(cooldownText);
@@ -193,7 +195,7 @@ function changeGameState(state, data) {
                     return;
                 };
 
-                dynamicElement.innerHTML = `بقي ${((startingTime - new Date()) / 1000) | 0} وتبدأ الجولة`
+                dynamicElement.innerHTML = `${formatter.format(remainingSeconds, 'second')} وتبدأ الجولة`
             }, 500);
 
             break;
