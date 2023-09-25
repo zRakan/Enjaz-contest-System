@@ -69,8 +69,14 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
 
 app.post('/stop', checkAuthorization, async function(req, res) {
     res.send("Good API");
-    await game.stopGame();
+    await game.finishGame();
 });
+
+app.post('/reset', checkAuthorization, async function(req, res) {
+    res.send("Good API");
+    await game.resetInfo();
+});
+
 
 let serverListener;
 serverListener = app.listen(PORT, function() {

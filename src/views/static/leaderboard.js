@@ -5,6 +5,8 @@ const contestantDiv = document.createElement('div');
 let leaderboardContainer;
 let id;
 
+const ignoreRedirect = new URLSearchParams(window.location.search).has('noredirect');
+
 /*
     <div class="animate__animated" id="students_contestant">
         <h3 id="rank">Pos</h3>
@@ -69,6 +71,11 @@ document.addEventListener("DOMContentLoaded", function() {
                     const waitingDiv = document.querySelector('#not-started-yet');
                     waitingDiv && waitingDiv.remove(); // Remove
                 } else {
+                    if(!ignoreRedirect && data.redirect_mainmenu) {
+                        location.href = '/'; // Return to main menu
+                        return;
+                    }
+
                     console.log(childs);
 
                     // Remove all contestants

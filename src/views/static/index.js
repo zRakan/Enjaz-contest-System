@@ -297,6 +297,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 break;
             
             case 'game_state':
+                if(data.redirect_leaderboard) { // Redirect to leaderboard
+                    console.log("Redirected");
+                    location.href = '/leaderboard';
+                    return;
+                }
+
                 changeGameState(data.current_state);
                 break;
         }

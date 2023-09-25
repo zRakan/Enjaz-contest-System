@@ -9,7 +9,11 @@ export function getTopPlayers() {
 
 export function updateLeaderboard(state) {
     const io = getNamespace();
-    io.emit('enjaz:leaderboard:updating', { type: 'state', value: state })
+
+    let payload = { type: 'state', value: state };
+    state == 'waiting' && (payload['redirect_mainmenu'] = true); // Redirect all viewers to mainmenu
+
+    io.emit('enjaz:leaderboard:updating', payload);
 }
 
 export function updateTopPlayers()  {

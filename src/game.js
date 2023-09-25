@@ -5,7 +5,7 @@ import { updateTopPlayers, updateLeaderboard } from "./leaderboard.js";
 import { getNamespace as leaderboard_socket } from "./websockets/leaderboard_socket.js";
 
 // Matchmaking information
-let gameState = 'waiting'; // [waiting, starting, started]
+let gameState = 'waiting'; // [waiting, starting, started, finished]
 
 let playersConnected = {};
 let playersCounter = 0;
@@ -69,8 +69,9 @@ export function getGameQuestion() {
 }
 
 function nextQuestion(questionSet) {
-    if(currentQuestion+1 > questions[questionSet].length) return stopGame(); // Stop game if reached last ques
+    if(currentQuestion+1 > questions[questionSet].length) return finishGame(); // Stop game if reached last ques
     currentQuestion++;
+    return true;
 }
 
 export function constructPlayerQuestion(playerId) {
@@ -128,28 +129,36 @@ export function startGame(questionSet) {
 
         const gameInterval = setInterval(function run() {
             if(getGameState() != 'started') return clearInterval(gameInterval);
+
             updateTopPlayers();
 
             // Next question
-            nextQuestion(questionSet);
+            if(nextQuestion(questionSet)) { // If returns true then it has question
+                // Start cooldown
+                gameTimer = new Date();
+                gameTimer.setSeconds(gameTimer.getSeconds() + 10);
 
-            // Start cooldown
-            gameTimer = new Date();
-            gameTimer.setSeconds(gameTimer.getSeconds() + 10);
-
-            // Send questions to clients
-            for(let playerId in playersConnected)
-                constructPlayerQuestion(playerId);
+                // Send questions to clients
+                for(let playerId in playersConnected)
+                    constructPlayerQuestion(playerId);
+            }
             return run;
         }(), 10000);
     }, 10000);
 }
 
-export async function stopGame() {
+export async function finishGame() {
     const io = getNamespace();
 
-    // Return all contestants to main menu
-    io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-started' });
+    // Redirect all contestants to leaderboard
+    io.to('contestant').emit('enjaz:updating', { type: 'game_state', current_state: 'not-started', redirect_leaderboard: true });
+
+    // Change state of game
+    changeGameState('finished', io);
+}
+
+export async function resetInfo() {
+    const io = getNamespace();
 
     // Reset player information
     playersCounter = 0; // Reset player counter
