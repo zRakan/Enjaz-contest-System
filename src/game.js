@@ -128,6 +128,8 @@ export function startGame(questionSet) {
 
         const gameInterval = setInterval(function run() {
             if(getGameState() != 'started') return clearInterval(gameInterval);
+            updateTopPlayers();
+
             // Next question
             nextQuestion(questionSet);
 
@@ -138,8 +140,6 @@ export function startGame(questionSet) {
             // Send questions to clients
             for(let playerId in playersConnected)
                 constructPlayerQuestion(playerId);
-
-            updateTopPlayers();
             return run;
         }(), 10000);
     }, 10000);
