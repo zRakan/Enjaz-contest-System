@@ -65,14 +65,11 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
     res.send("Good API");
     game.startGame(questionId);
 
-    // Update leaderboard state
-    leaderboard.updateLeaderboard('started');
 });
 
 app.post('/stop', checkAuthorization, async function(req, res) {
     res.send("Good API");
     await game.stopGame();
-    leaderboard.updateLeaderboard('waiting');
 });
 
 let serverListener;

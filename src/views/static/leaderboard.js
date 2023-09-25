@@ -60,10 +60,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const Type = data.type;
         const Value = data.value;
 
+        // Assign ID if provided
+            data.id && (id = data.id);
+
         switch(Type) {
-            case 'get_id':
-                data.id && (id = data.id);
-                break;
             case 'state':
                 if(Value != 'waiting') {
                     const waitingDiv = document.querySelector('#not-started-yet');
@@ -82,11 +82,13 @@ document.addEventListener("DOMContentLoaded", function() {
             case 'leaderboard':
                 for(let i = 0; i < Value.length; i++) {
                     const currentElement = childs[i+1];
-                    console.log(currentElement);
 
                     const currentName = Value[i].name;
                     const currentPoints = Value[i].points;
                     const currentId = Value[i].id;
+
+                    console.log('Current ID', id, currentId, currentId == id);
+
 
                     // If new contestant (Not overwriting)
                     if(!currentElement) {

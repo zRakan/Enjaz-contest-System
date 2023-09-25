@@ -1,6 +1,6 @@
 import { getNamespace } from "./websockets/game_socket.js";
 
-import { updateTopPlayers } from "./leaderboard.js";
+import { updateTopPlayers, updateLeaderboard } from "./leaderboard.js";
 
 import { getNamespace as leaderboard_socket } from "./websockets/leaderboard_socket.js";
 
@@ -114,6 +114,10 @@ export function startGame(questionSet) {
     io.except('contestant').disconnectSockets(); // Disconnect all websockets of non-participants
     
     leaderboard_socket().emit('enjaz:leaderboard:getid'); // Tell all users from leaderboard socket to request their IDs
+    
+    // Update leaderboard state
+    updateLeaderboard('started');
+
 
 
     // Start game after 10 seconds
@@ -165,6 +169,9 @@ export async function stopGame() {
 
     // Change state of game
     changeGameState('waiting', io);
+
+    // Update leaderboard state
+    updateLeaderboard('waiting');
 }
 
 // Game information
