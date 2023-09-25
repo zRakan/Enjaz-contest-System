@@ -244,8 +244,10 @@ export function playerAnswer(id, data) {
         
             if(answer == answers[question]) {
                 const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
+                const pointsAcquired = 1 + (remainingSeconds / 10);
+
                 console.log(remainingSeconds, 1+(remainingSeconds/10))
-                playerData.points += parseFloat((1 + (remainingSeconds / 10)).toPrecision(3));
+                playerData.points = parseFloat((playerData.points + pointsAcquired).toFixed(10));
                 return true;
             }
         }
