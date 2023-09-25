@@ -1,0 +1,130 @@
+
+*{
+
+    font-family: 'montaser';
+
+}
+
+
+@font-face {
+    font-family: montaser;
+    src: url(../assets/font.ttf);
+}
+
+
+body{
+    
+    background-image: url('../assets/background_enjaz.png'); 
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+    height: 100%;  
+    display: flex;
+    justify-content: center;  
+
+}
+
+
+#Contestants{
+
+    
+  position: absolute;
+  left: 50%;
+  background-color: rgba(255, 255, 255, 0.718);
+  top: 50%;
+  width: 90%;
+  max-width: 1100px;
+  height: 60%;
+  overflow-y: scroll;
+  transform: translate(-50%,-50%);
+  display: table;
+  justify-content: space-around;
+  display: grid;
+  justify-content: center;
+  align-content: stretch;
+  border-radius: 25px 10px 10px 25px;
+  padding: 10px;
+  
+}
+
+ul{
+    width: 200px;
+}
+
+button {
+    width: 110px;
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    box-shadow: 0px 4px 13px 0px #0000005f;
+
+
+}
+
+#accept_all{
+
+    position: absolute;
+    left: 50%;
+    top: 90%;
+    transform: translate(-50%,-50%);
+}
+
+#run_app{
+
+    display: flex;
+    width: 300px;
+    height: 130px;
+    align-items: center;
+    gap: 80px;
+}
+
+::-webkit-scrollbar {
+    width: 20px;
+  }
+  
+  
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+  }
+   
+  
+  ::-webkit-scrollbar-thumb {
+    background: #999999;; 
+    border-radius: 10px;
+  }
+  
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #828282;; 
+  }
+  
+
+
+#information{
+
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+@media screen and (max-width: 1200px) {
+    #information {
+        gap: 80px;
+        margin-bottom: 20px;
+    }
+
+    ul {
+        width: 100px;
+        margin: 0;
+        padding: 0;
+    }
+
+    ul#name_contestant {
+        width: 170px;
+    }
+}
