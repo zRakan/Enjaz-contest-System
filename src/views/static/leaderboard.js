@@ -86,11 +86,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 break;
             case 'leaderboard':
-                for(let i = 0; i < Value.length; i++) {
+                for(let i = 0; i < (Value.length > 10 ? 10 : Value.length); i++) {
+                    const currentPoints = Value[i].points;
+                    if(currentPoints <= 0) continue; // Ignore <= 0 points  
+
                     const currentElement = childs[i+1];
 
                     const currentName = Value[i].name;
-                    const currentPoints = Value[i].points;
                     const currentId = Value[i].id;
 
                     console.log('Current ID', id, currentId, currentId == id);
