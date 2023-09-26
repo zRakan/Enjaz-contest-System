@@ -4,9 +4,19 @@ import session from "express-session";
 // Reading & Writing files [fs]
 import fs from "fs";
 
+// Environment
+import dotenv from "dotenv";
+dotenv.config();
+
+
+// HTTPS & Logger
+import https from "https";
+import { logger } from "./logger.js";
+
+
 
 const app = express(); // Creating App
-const PORT = 3000;
+const PORT = process.env.SSL_KEY != "" ? 8443 : 80; // Change to 80 if SSL not provided
 
 // Initialize middle-ware(s)
 const sessionMD = session({ // Session system
@@ -20,9 +30,14 @@ app.use(sessionMD);
 
 app.use(express.json()); // Bodyparser built-in function
 app.use(express.urlencoded({ extended: true }));
+app.use(logger); // Logging middleware
 
 // View engine
 app.set('view engine', 'ejs');
+
+// Trust proxy
+if(process.env.SSL_KEY != "") app.set('trust proxy', 1); // Trust first proxy
+
 
 // Static files
 app.set('views', 'src/views'); // Set views folder
@@ -106,9 +121,21 @@ app.post('/reset', checkAuthorization, async function(req, res) {
 
 
 let serverListener;
-serverListener = app.listen(PORT, function() {
-    console.log("Webserver Started");
-});
+if(process.env.SSL_KEY != "" && process.env.SSL_CERT != "") { // Check if environment has SSL cert or not
+    // SSL
+    serverListener = https.createServer({
+        key: fs.readFileSync(process.env.SSL_KEY),
+        cert: fs.readFileSync(process.env.SSL_CERT),
+    }, app);
+
+    httpsConnection.listen(PORT, () => {
+        console.log("[HTTPS] Started webserver");
+    });
+} else {
+    serverListener = app.listen(PORT, function() {
+        console.log("Webserver Started");
+    });
+}
 
 // Creating websocket
 //import { startWebsocket } from "./websocket.js";
