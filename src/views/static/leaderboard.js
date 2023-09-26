@@ -1,5 +1,5 @@
 const contestantDiv = document.createElement('div');
-      contestantDiv.classList.add('animate__animated');
+      //contestantDiv.classList.add('animate__animated');
       contestantDiv.setAttribute('id', 'students_contestant');
 
 let leaderboardContainer;
@@ -111,12 +111,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
                     // If position of player has changed
                         // Format the name and remove special characters
-                        let formattedName = name.innerHTML;
+                        /*let formattedName = name.innerHTML;
                             formattedName = formattedName.replace(' (أنت)', '') // Remove 'You' suffix
 
                         if(formattedName != currentName) {
                             console.log("Overwrite pos");
-                        }
+                        }*/
 
                     name.innerHTML = currentName + (currentId == id ? " (أنت)" : "");
                     points.innerHTML = currentPoints;
