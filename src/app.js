@@ -128,7 +128,7 @@ if(process.env.SSL_KEY != "" && process.env.SSL_CERT != "") { // Check if enviro
         cert: fs.readFileSync(process.env.SSL_CERT),
     }, app);
 
-    httpsConnection.listen(PORT, () => {
+    serverListener.listen(PORT, () => {
         console.log("[HTTPS] Started webserver");
     });
 } else {
