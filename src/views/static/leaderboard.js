@@ -79,8 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     console.log(childs);
 
                     // Remove all contestants
-                    for(let i = 1; i < childs.length; i++)
-                        childs[i].remove();
+                    while(childs[1]) childs[1].remove();
     
                     // Append waiting state
                     leaderboardContainer.appendChild(notStarted);
