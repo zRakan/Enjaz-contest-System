@@ -115,7 +115,7 @@ app.post('/stop', checkAuthorization, async function(req, res) {
 });
 
 app.post('/reset', checkAuthorization, async function(req, res) {
-    if(game.getGameState() != 'finished') return res.send({ status: 'error', message: 'توجد جولة فعّالة' });
+    if(game.getGameState() != 'finished') return res.send({ status: 'error', message: 'لا توجد جولة منتهية' });
 
     res.send({ status: 'success' });
     await game.resetInfo();
