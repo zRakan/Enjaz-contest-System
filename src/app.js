@@ -59,6 +59,9 @@ app.get('/admin/:api_key', checkAuthorization, function(req, res) {
     res.render('admin');  
 })
 
+// Static admin files
+app.use('/admin/:api_key/', checkAuthorization, express.static('./src/views/static_admin'));
+
 app.post('/start/:question_id', checkAuthorization, function(req, res) {
     let questionId = req.params['question_id'];
     if(!questionId) res.sendStatus(403);

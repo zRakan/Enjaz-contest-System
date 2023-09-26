@@ -1,12 +1,12 @@
 @font-face {
     font-family: montaser;
-    src: url(../assets/font.ttf);
+    src: url(/assets/font.ttf);
 }
 
 * {  font-family: 'montaser'; }
 
 body {
-    background-image: url('../assets/background_enjaz.png'); 
+    background-image: url('/assets/background_enjaz.png'); 
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: 100% 100%;
