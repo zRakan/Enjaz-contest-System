@@ -21,7 +21,10 @@ export default function(io) {
         const req = ws.request;
         const ID = req.session.id;
 
-        console.log("Connected", ID);
+        console.log("[ADMIN-SOCKET] Connected", ID);
+
+        // Sending all non-accepted users
+        ws.emit('enjaz:contestant:new', { players: game.getNonAcceptedPlayers() });
     });
 }
 

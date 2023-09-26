@@ -28,9 +28,8 @@ app.set('view engine', 'ejs');
 app.set('views', 'src/views'); // Set views folder
 app.use(express.static('./src/views/static')) // Set static folder
 
-// Game state & Leaderboard
+// Game state
 import * as game from "./game.js";
-import * as leaderboard from "./leaderboard.js";
 
 app.get('/', function(req, res) {
     if(game.getGameState() != 'waiting' && !game.isPlayerJoined(req.session.id)) return res.redirect('leaderboard');
@@ -58,6 +57,26 @@ function checkAuthorization(req, res, next) {
 app.get('/admin/:api_key', checkAuthorization, function(req, res) {
     res.render('admin');  
 })
+
+app.post('/admin/:api_key/accept', checkAuthorization, function(req, res) {
+    console.log(req.body);
+    
+    const ID = req.body["ID"];
+    if(!ID) return res.sendStatus(400);
+
+    console.log("Accepted", ID)
+    res.send({ status: game.acceptPlayer(ID) ? 'success' : 'failed' });
+});
+
+app.post('/admin/:api_key/reject', checkAuthorization, function(req, res) {
+    console.log(req.body);
+    
+    const ID = req.body["ID"];
+    if(!ID) return res.sendStatus(400);
+
+    console.log("Rejected", ID);
+    res.send({ status: game.rejectPlayer(ID) ? 'success' : 'failed' });
+});
 
 // Static admin files
 app.use('/admin/:api_key/', checkAuthorization, express.static('./src/views/static_admin'));

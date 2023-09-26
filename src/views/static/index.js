@@ -262,13 +262,26 @@ document.addEventListener("DOMContentLoaded", function() {
         if(sIdVal.length != 9) return showNotification("الرقم الجامعي يجب ان يكون مكوّن من 9 خانات", "failed");
 
         socket.emit("enjaz:new-contestant", { name: nameVal, sid: sIdVal })
-        showNotification("يتم انتظار القبول...", "warning");
+        showNotification("يتم انتظار القبول...");
+        containerInput.classList.add('hidden'); // Hide inputs until is reject
+
 
         // Cooldown
         cooldownActions = true;
         setTimeout(function() {
             cooldownActions = false;
         }, 5000);
+    });
+
+    // Client is waiting
+    socket.on('enjaz:waiting', function() {
+        containerInput.classList.add('hidden'); // Hide inputs until is reject
+    });
+
+    // Client is rejected
+    socket.on('enjaz:rejected', function() {
+        showNotification('تم رفض تسجيلك', 'failed');
+        containerInput.classList.remove('hidden');
     });
 
     // Client is connected successfully

@@ -75,12 +75,19 @@ function createContestant(id, name, studentId) {
 
             body: JSON.stringify({
                 'ID': id,
-            })
+            }),
+
+            headers: {
+                'Content-Type':'application/json'
+            }
         });
 
         if(resp.status == 200) {        
             resp = await resp.json();        
             console.log(resp);
+            
+            contestantInformation.remove(); // Remove information div
+            showNotification(resp.status == 'success' ? 'تم رفض اللاعب' : 'حدث خطأ', resp.status);
         } else showNotification('حدث خطأ', 'failed');
     });
 
@@ -91,12 +98,19 @@ function createContestant(id, name, studentId) {
 
             body: JSON.stringify({
                 'ID': id,
-            })
+            }),
+
+            headers: {
+                'Content-Type':'application/json'
+            }
         });
 
         if(resp.status == 200) {        
             resp = await resp.json();        
             console.log(resp);
+
+            contestantInformation.remove(); // Remove information div
+            showNotification(resp.status == 'success' ? 'تم قبول اللاعب' : 'حدث خطأ', resp.status);
         } else showNotification('حدث خطأ', 'failed');
     });
 
@@ -129,6 +143,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // New contestant event
     socket.on('enjaz:contestant:new', function(data) {
-        createContestant(data.id, data.name, data.studentId);
+        console.log(data);
+    
+        for(let player of data.players) {
+            createContestant(player.id, player.name, player.studentId);
+        }
     });
 });

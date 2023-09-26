@@ -2,7 +2,9 @@ import { getNamespace } from "./websockets/game_socket.js";
 
 import { updateTopPlayers, updateLeaderboard } from "./leaderboard.js";
 
+import { getNamespace as gameNamespace } from "./websockets/game_socket.js";
 import { getNamespace as leaderboard_socket } from "./websockets/leaderboard_socket.js";
+import { getNamespace as admin_socket } from "./websockets/admin_socket.js";
 
 // Matchmaking information
 let gameState = 'waiting'; // [waiting, starting, started, finished]
@@ -102,7 +104,12 @@ export function startGame(questionSet) {
 
     // Shuffling question set for each player
     for(let playerId in playersConnected) {
-        const player = playersConnected[playerId];        
+        const player = playersConnected[playerId];      
+        if(!player.accept) { // Ignore & Delete non-accepted players
+            delete playersConnected[playerId];
+            continue; 
+        }
+        
         player.questions = shuffle(questionSet);
     }
 
@@ -198,6 +205,46 @@ export function changeGameState(state, io) {
 }
 
 // Player information
+
+/* Accept/Reject functions */
+export function getNonAcceptedPlayers() {
+    let nonAcceptedPlayers = [];
+
+    for(let playerId in playersConnected) {
+        const player = playersConnected[playerId];    
+        !player.accept && nonAcceptedPlayers.push({ id: playerId, name: player.name, studentId: player.sId })
+    }
+
+    return nonAcceptedPlayers;    
+}
+
+export function acceptPlayer(ID) {
+    const playerData = playersConnected[ID];
+
+    playerData && (playerData.accept = true);
+    console.log(playerData);
+    playerData.session.join('contestant'); // Set client websocket as contestant
+
+    playerData.session.emit('enjaz:joined', { game_state: getGameState(), first_time: true });
+    gameNamespace().emit('enjaz:updating', { type: "connected_users", connected_users: ++playersCounter });
+
+    return true;
+}
+
+export function rejectPlayer(ID) {
+    const playerData = playersConnected[ID];
+
+    if(playerData) {
+        playerData.session.emit('enjaz:rejected');
+        delete playersConnected[ID];
+
+        return true;
+    }
+
+    return false;
+}
+
+
 export function getNumberOfPlayers() {
     return playersCounter;
 }
@@ -217,22 +264,30 @@ export function updatePlayerSocket(id, ws) {
 
 
 export function getPlayerId(id){
-    return playersConnected[id].id;
+    return playersConnected[id] && playersConnected[id].id;
 }
 
 export function isPlayerJoined(id) {
-    return playersConnected[id];
+    return playersConnected[id] && playersConnected[id].accept;
 }
 
 export function playerJoined(id, data) {
     playersConnected[id] = data;
 
-    return ++playersCounter;
+    // Send to admin websocket
+    admin_socket().emit('enjaz:contestant:new', { players: [
+        { id: id, name: data.name, studentId: data.sId }
+    ]});
+
+    return playersCounter;
 }
 
 export function playerLeft(id) {
+    const isAccepted = playersConnected[id].accept;
     delete playersConnected[id]; // Remove player information
-    return --playersCounter;
+
+    isAccepted && (playersCounter--);
+    return playersCounter;
 }
 
 
