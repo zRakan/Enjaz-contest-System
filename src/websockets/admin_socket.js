@@ -1,0 +1,31 @@
+import * as game from '../game.js';
+import * as utils from '../utils.js';
+
+
+let adminNamespace;
+
+export default function(io) {
+    console.log("admin socket init");
+
+    adminNamespace = io.of('/requestContestants');
+    
+    // Prevent connections without the right API key
+    adminNamespace.use(function(ws, next) {
+        const api = ws.handshake.auth.api;
+        if(!api || api != "RAKAN-33828438897517041749474368349544") return;
+
+        next(); // Accept connection
+    });
+
+    adminNamespace.on('connection', function(ws) {
+        const req = ws.request;
+        const ID = req.session.id;
+
+        console.log("Connected", ID);
+    });
+}
+
+
+export function getNamespace() {
+    return adminNamespace;
+}

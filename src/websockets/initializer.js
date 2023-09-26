@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 // Websocket namespaces
 import game_socket from "./game_socket.js";
 import leaderboard_socket from "./leaderboard_socket.js";
+import admin_socket from "./admin_socket.js";
 
 let websocket;
 export default function(listener, engine) {
@@ -15,6 +16,7 @@ export default function(listener, engine) {
     // Calling namespaces
     game_socket(websocket);
     leaderboard_socket(websocket);
+    admin_socket(websocket);
     
     return websocket;
 }
