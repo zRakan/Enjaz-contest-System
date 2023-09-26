@@ -1,19 +1,11 @@
-
-*{
-
-    font-family: 'montaser';
-
-}
-
-
 @font-face {
     font-family: montaser;
     src: url(../assets/font.ttf);
 }
 
+* {  font-family: 'montaser'; }
 
-body{
-    
+body {
     background-image: url('../assets/background_enjaz.png'); 
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -21,33 +13,28 @@ body{
     height: 100%;  
     display: flex;
     justify-content: center;  
-
 }
 
+#Contestants {
+    background-color: rgba(255, 255, 255, 0.718);
 
-#Contestants{
 
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    height: 60%;
+    width: 90%;
+    max-width: 1100px;
+
+    overflow-y: scroll;
+    transform: translate(-50%,-50%);
     
-  position: absolute;
-  left: 50%;
-  background-color: rgba(255, 255, 255, 0.718);
-  top: 50%;
-  width: 90%;
-  max-width: 1100px;
-  height: 60%;
-  overflow-y: scroll;
-  transform: translate(-50%,-50%);
-  display: table;
-  justify-content: space-around;
-  display: grid;
-  justify-content: center;
-  align-content: stretch;
-  border-radius: 25px 10px 10px 25px;
-  padding: 10px;
-  
+    border-radius: 25px 10px 10px 25px;
+    padding: 10px;
 }
 
-ul{
+ul {
     width: 200px;
 }
 
@@ -59,12 +46,9 @@ button {
     cursor: pointer;
     font-size: 15px;
     box-shadow: 0px 4px 13px 0px #0000005f;
-
-
 }
 
-#accept_all{
-
+#accept_all {
     position: absolute;
     left: 50%;
     top: 90%;
@@ -72,10 +56,10 @@ button {
 }
 
 #run_app{
-
     display: flex;
     width: 300px;
     height: 130px;
+
     align-items: center;
     gap: 80px;
 }
@@ -103,10 +87,9 @@ button {
   
 
 
-#information{
-
-    list-style-type: none;
+#information {
     display: flex;
+    
     justify-content: center;
     align-items: center;
 }

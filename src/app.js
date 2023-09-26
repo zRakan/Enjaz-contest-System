@@ -50,10 +50,14 @@ app.get('/leaderboard', function(req, res) {
 
 const API_KEY = 'RAKAN-33828438897517041749474368349544';
 function checkAuthorization(req, res, next) {
-    const apiKey = req.headers["api_key"];
+    const apiKey = req.headers["api_key"] || req.params["api_key"];
     if(!apiKey || apiKey != API_KEY) return res.sendStatus(403);
     next();
 }
+
+app.get('/admin/:api_key', checkAuthorization, function(req, res) {
+    res.render('admin');  
+})
 
 app.post('/start/:question_id', checkAuthorization, function(req, res) {
     let questionId = req.params['question_id'];
