@@ -112,6 +112,22 @@ button {
     }
 }
 
+/* Start container */
+#start-container {
+    display: flex;
+    flex-direction: column;
+}
+
+#start-container > button {
+    margin-bottom: 5px;
+}
+
+#start-container > input {
+    width: 100px;
+    text-align: center;
+}
+
+
 /* Notification System */
 .notification-container {
     direction: ltr;

@@ -86,11 +86,12 @@ app.post('/start/:question_id', checkAuthorization, function(req, res) {
     if(!questionId) res.sendStatus(403);
 
     questionId = parseInt(questionId) - 1;
-    if(!game.checkQuestionSet(questionId)) return res.sendStatus(403);
+    if(!game.checkQuestionSet(questionId)) return res.send({ status: 'error', message: 'رقم الأسئلة خطأ' });
+    if(game.getNumberOfPlayers() <= 0) return res.send({ status: 'error', message: 'لا يوجد عدد لاعبين كافين' });
+    if(game.getGameState() != 'waiting') return res.send({ status: 'error', message: 'توجد جولة فعّالة' });
 
-    res.send("Good API");
+    res.send({ status: 'success' });
     game.startGame(questionId);
-
 });
 
 app.post('/stop', checkAuthorization, async function(req, res) {
@@ -99,7 +100,7 @@ app.post('/stop', checkAuthorization, async function(req, res) {
 });
 
 app.post('/reset', checkAuthorization, async function(req, res) {
-    res.send("Good API");
+    res.send({ status: 'success' });
     await game.resetInfo();
 });
 

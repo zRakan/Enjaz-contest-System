@@ -135,6 +135,56 @@ const apiKey = location.pathname.substring(location.pathname.indexOf('/', 1)+1, 
 document.addEventListener('DOMContentLoaded', function() {
     notificationContainer = document.querySelector('.notification-container');
     
+    /* Static button [Start, Reset] */
+    
+    // Start button
+    const startBtn = document.querySelector('#start-container > button');
+    const questionInput = document.querySelector('#start-container > input');
+
+    startBtn.addEventListener('click', async function() {
+        const inputVal = parseInt(questionInput.value);
+        if(!(/^[0-9]+$/).test(inputVal)) return showNotification("الرقم الجامعي يتكون من ارقام فقط", "failed");
+
+        let resp = await fetch(`/start/${inputVal}`, {
+            method: "POST",
+
+            headers: {
+                'api_key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if(resp.status == 200) {
+            resp = await resp.json();
+            
+            if(resp.status == 'success') showNotification('تم تشغيل الجولة', 'success');
+            else showNotification(resp.message, 'failed');
+
+        } else showNotification('حدث خطأ', 'failed');
+    });
+
+    // Reset button
+    const resetBtn = document.querySelector('#reset-btn');
+    resetBtn.addEventListener('click', async function() {
+        let resp = await fetch(`/reset`, {
+            method: "POST",
+
+            headers: {
+                'api_key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if(resp.status == 200) {
+            resp = await resp.json();
+            
+            if(resp.status == 'success') showNotification('تم تصفير الجولة', 'success');
+            else showNotification(resp.message, 'failed');
+
+        } else showNotification('حدث خطأ', 'failed');
+    });
+
+    // Websocket
     const socket = io('/requestContestants', {
         auth: {
             api: apiKey
