@@ -80,8 +80,9 @@ header > h1 {
 .logos {
     position: relative;
 
-    height: 250px;
+    height: fit-content;
     
+    top: 10px;
     left: 5px;
 
     display: flex;
