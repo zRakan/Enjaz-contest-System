@@ -12,7 +12,7 @@ export default function(io) {
     // Prevent connections without the right API key
     adminNamespace.use(function(ws, next) {
         const api = ws.handshake.auth.api;
-        if(!api || api != "RAKAN-33828438897517041749474368349544") return;
+        if(!api || api != process.env.API_KEY) return;
 
         next(); // Accept connection
     });
