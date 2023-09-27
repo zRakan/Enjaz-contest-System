@@ -79,9 +79,9 @@ header > h1 {
 /* Header Logos */
 .logos {
     position: relative;
+
     height: 250px;
     
-    top: 70px;
     left: 5px;
 
     display: flex;
@@ -99,47 +99,6 @@ header > h1 {
 .logos img:nth-child(1) {
     height: 93px;
     width: 240px;
-}
-
-@media screen and (max-height:760px) {
-
-    .logos {
-        top: 18px;
-        left: 5px;
-    }
-
-    .logos img:nth-child(1) {
-        height: 70px;
-        width: 160px;
-    }
-
-    .logos img:nth-child(2) {
-        width: 150px;
-        height: 160px;
-    }
-}
-
-@media screen and (max-height:600px) {
-    .logos {
-        top: 7px;
-        left: 5px;
-    }
-
-    .logos img:nth-child(1) {
-        height: 60px;
-        width: 145px;
-    }
-
-    .logos img:nth-child(2) {
-        width: 140px;
-        height: 145px;
-    }
-}
-
-@media screen and (min-height:840px) {
-    .logos {
-        top: 110px;
-    }
 }
 
 
@@ -207,6 +166,7 @@ header > h1 {
 }
 
 .contestant-input::placeholder {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
     color: rgb(118, 118, 118);
     opacity: 0.5;
 }
@@ -233,6 +193,44 @@ header > h1 {
     margin-top: 15px;
     box-shadow: 0px 6px 20px 1px #0000005f;
 }
+
+@media screen and (max-height:760px) {
+    .contestant-container {
+        top: 35%;
+    }
+
+    .logos {
+        left: 5px;
+    }
+
+    .logos img:nth-child(1) {
+        height: 70px;
+        width: 160px;
+    }
+
+    .logos img:nth-child(2) {
+        width: 150px;
+        height: 160px;
+    }
+}
+
+@media screen and (max-height:600px) {
+    .logos {
+        top: 7px;
+        left: 5px;
+    }
+
+    .logos img:nth-child(1) {
+        height: 60px;
+        width: 145px;
+    }
+
+    .logos img:nth-child(2) {
+        width: 140px;
+        height: 145px;
+    }
+}
+
 
 /*
     Footer
@@ -368,14 +366,16 @@ footer p:nth-child(2) {
 /* Question container */
 #question-container {
     display: flex;
-    width: 50%;
+    width: 90%;
     align-items: center;
     flex-direction: column;
 }
 
 #question-container p:nth-child(1) {
     color: #144f43;
-    font-size: 25px;
+    font-size: 5vw;
+
+    width: 80%;
 }
 
 #question-container #time {
@@ -391,7 +391,7 @@ footer p:nth-child(2) {
     height: 40px;
     margin-bottom: 15px;
     max-width: 300px;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 
