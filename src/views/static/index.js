@@ -107,6 +107,9 @@ function createQuestion(title, options, timer) {
     questionElement = document.createElement('div');
     questionElement.setAttribute('id', 'question-container');
 
+    if((/[a-zA-Z]/).test(title.charAt(0)))
+        questionElement.style.direction = 'ltr';
+
     // Creating question title
     const questionTitle = document.createElement('p');
     questionTitle.innerHTML = title;
@@ -117,6 +120,14 @@ function createQuestion(title, options, timer) {
         const btn = document.createElement('button');
         btn.innerHTML = option;
 
+        questionElement.appendChild(btn);
+    }
+
+    // Force create 3rd option (Hidden)
+    if(options.length < 3) {
+        const btn = document.createElement('button');
+        btn.classList.add('hidden');
+        
         questionElement.appendChild(btn);
     }
 
@@ -340,11 +351,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if(!ignoreQuestion) {
             questionElement.classList.remove('hidden');
+            questionElement.style.direction = ((/[a-zA-Z]/).test(data.title.charAt(0))) ? 'ltr' : 'rtl'; // Change direction of question based on language of title
+            
             const elements = questionElement.children;
             elements[0].innerHTML = data.title; // Set question title
 
+            // Hide third option (If options are 2)
+            if(data.options.length == 2) elements[3].classList.add('hidden');
+            else elements[3].classList.remove('hidden');
+
             for(let option in data.options) {
                 option = parseInt(option);
+
                 const el = elements[option+1];
 
                 el.innerHTML = data.options[option];
