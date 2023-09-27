@@ -56,8 +56,9 @@ function nextQuestion(questionSet) {
 
 export function constructPlayerQuestion(playerId) {
     const currentQuestion = getGameQuestion();
+    const playerData = playersConnected[playerId];
+    if(!playerData) return; // Ignore player id without object
 
-    const playerData = playersConnected[playerId]
     const playerQuestions = playerData.questions[currentQuestion];
 
     let payload = {
@@ -207,15 +208,18 @@ export function getNonAcceptedPlayers() {
 
 export function acceptPlayer(ID) {
     const playerData = playersConnected[ID];
+    if(playerData) { // Check if ID has an object
+        playerData.accept = true;
+        playerData.session.join('contestant'); // Set client websocket as contestant
+        playerData.session.emit('enjaz:joined', { game_state: getGameState(), first_time: true });
 
-    playerData && (playerData.accept = true);
-    console.log(playerData);
-    playerData.session.join('contestant'); // Set client websocket as contestant
+        // Update player count
+        getNamespace().emit('enjaz:updating', { type: "connected_users", connected_users: ++playersCounter });
 
-    playerData.session.emit('enjaz:joined', { game_state: getGameState(), first_time: true });
-    getNamespace().emit('enjaz:updating', { type: "connected_users", connected_users: ++playersCounter });
+        return true;
+    }
 
-    return true;
+    return false;
 }
 
 export function rejectPlayer(ID) {
