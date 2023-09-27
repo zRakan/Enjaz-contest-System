@@ -62,7 +62,7 @@ app.get('/leaderboard', function(req, res) {
     });
 });
 
-const API_KEY = 'RAKAN-33828438897517041749474368349544';
+const API_KEY = process.env.API_KEY;
 function checkAuthorization(req, res, next) {
     const apiKey = req.headers["api_key"] || req.params["api_key"];
     if(!apiKey || apiKey != API_KEY) return res.sendStatus(403);
