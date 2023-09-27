@@ -373,11 +373,20 @@ footer p:nth-child(2) {
 }
 
 #question-container p:nth-child(1) {
+    text-align: center;
+
     color: #144f43;
     font-size: 5vw;
 
     width: 80%;
 }
+
+@media screen and (min-width: 1279px) {
+    #question-container p:nth-child(1) {
+        font-size: 25px;
+    }
+}
+
 
 #question-container #time {
     color: #144f43;
