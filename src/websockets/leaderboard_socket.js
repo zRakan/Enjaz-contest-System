@@ -30,7 +30,7 @@ export default function(io) {
         if(game.getGameState() != 'waiting')
             ws.emit('enjaz:leaderboard:updating', { type: 'leaderboard', value: leaderboard.getTopPlayers() })
 
-        console.log("[SOCKET] User Connected", ID);
+        console.log("[LEADERBOARD-SOCKET] User Connected", ID);
     });
 }
 

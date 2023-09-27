@@ -11,7 +11,7 @@ export default async function(io) {
         const req = ws.request;
         const ID = req.session.id;
 
-        console.log('[SOCKET] User Connected', ID);
+        console.log('[GAME-SOCKET] User Connected', ID);
 
         // Getting current connected users
         ws.emit('enjaz:updating', { type: "connected_users", connected_users: game.getNumberOfPlayers() });
