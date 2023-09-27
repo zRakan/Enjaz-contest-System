@@ -14,39 +14,14 @@ let playersCounter = 0;
 let gameTimer
 
 // Questions
-const questions = [
-    [
-        { title: '1+1', options: [2, 1], id: 1, answer: 2 },
-        { title: '1+2', options: [3, 2], id: 2, answer: 3 },
-        { title: '3+1', options: [4, 0], id: 3, answer: 4 },
-        { title: '4+0', options: [4, 2], id: 4, answer: 4 }
-    ],
-
-    [
-        { title: '1+1', options: [2, 1], id: 5, answer: 2 },
-        { title: '1+2', options: [3, 2], id: 6, answer: 3 },
-        { title: '3+1', options: [4, 0], id: 7, answer: 4 },
-        { title: '4+0', options: [4, 2], id: 8, answer: 4 }
-    ],    
-]
-
-// Initialize answers
-const answers = {};
-for(let questionSet of questions) {
-    for(let question in questionSet) {
-        const ques = questionSet[question]
-        answers[ques.id] = ques.answer;
-    }
-}
-
-console.log(answers);
+import { getQuestions, getAnswers } from "./questions.js";
 
 export function checkQuestionSet(setNumber) {
-    return questions[setNumber];
+    return getQuestions()[setNumber];
 }
 
 function shuffle(questionSet) {
-    let array = [...questions[questionSet]];
+    let array = [...getQuestions()[questionSet]];
 
     let currentIndex = array.length, randomIndex;
 
@@ -71,7 +46,7 @@ export function getGameQuestion() {
 }
 
 function nextQuestion(questionSet) {
-    if(currentQuestion+1 > questions[questionSet].length) return finishGame(); // Stop game if reached last ques
+    if(currentQuestion+1 > getQuestions()[questionSet].length) return finishGame(); // Stop game if reached last ques
     currentQuestion++;
     return true;
 }
@@ -306,7 +281,7 @@ export function playerAnswer(id, data) {
         if(question && !playerData.answers[question]) { // Check if question is answered before or not
             playerData.answers[question] = true; // Indicate this question has been answered
         
-            if(answer == answers[question]) {
+            if(answer == getAnswers()[question]) {
                 const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
                 const pointsAcquired = 1 + (remainingSeconds / 10);
 
