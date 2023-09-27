@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     socket.on('enjaz:leaderboard:updating', function(data) {
-        console.log(data);
+        //console.log(data);
 
         const childs = leaderboardContainer.children;
 
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         return;
                     }
 
-                    console.log(childs);
+                    //console.log(childs);
 
                     // Remove all contestants
                     while(childs[1]) childs[1].remove();
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const currentName = Value[i].name;
                     const currentId = Value[i].id;
 
-                    console.log('Current ID', id, currentId, currentId == id);
+                    //console.log('Current ID', id, currentId, currentId == id);
 
 
                     // If new contestant (Not overwriting)
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const [pos, points] = currentElement.querySelectorAll('h3');
 
                     const name = currentElement.querySelector('h4');
-                    console.log(name, pos, points);
+                    //console.log(name, pos, points);
 
                     // If position of player has changed
                         // Format the name and remove special characters

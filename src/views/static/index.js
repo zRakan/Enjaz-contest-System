@@ -12,7 +12,7 @@ function shuffle(arr) {
 
 let handlers = {};
 function setEventHandler(element, id, evName, func) {
-    console.log(handlers);
+    //console.log(handlers);
     
     if(handlers[id])
         element.removeEventListener(evName, handlers[id], true); // Remove old handler
@@ -90,7 +90,7 @@ function setGameTimer(timer) {
 
     const cooldownInterval = setInterval(function() {
         const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
-        console.log("remaining ques", remainingSeconds);
+        //console.log("remaining ques", remainingSeconds);
 
         if(currentState != 'started') {
             clearInterval(cooldownInterval)
@@ -190,7 +190,7 @@ function changeGameState(state, data) {
                 contestantContainer.appendChild(dynamicElement);
             }
 
-            console.log("Starting...");   
+            //console.log("Starting...");   
 
             if(!data || !data.current_timer) {
                 startingTime = new Date();
@@ -199,7 +199,7 @@ function changeGameState(state, data) {
 
             const startingInterval = setInterval(function() {
                 const remainingSeconds = ((startingTime - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
-                console.log("remaining", remainingSeconds);
+                //console.log("remaining", remainingSeconds);
 
                 if(currentState != 'starting' || remainingSeconds <= 0) {
                     clearInterval(startingInterval)
@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Client is connected successfully
     socket.on('enjaz:joined', function(data) {
-        console.log(data);
+        //console.log(data);
         isConnected = true;
 
         // Remove all
@@ -315,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     socket.on('enjaz:updating', function(data) {
-        console.log(data);
+        //console.log(data);
 
         switch(data.type) {
             case 'connected_users':
@@ -324,7 +324,7 @@ document.addEventListener("DOMContentLoaded", function() {
             
             case 'game_state':
                 if(data.redirect_leaderboard) { // Redirect to leaderboard
-                    console.log("Redirected");
+                    //console.log("Redirected");
                     location.href = '/leaderboard';
                     return;
                 }
@@ -336,11 +336,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     socket.on('enjaz:question', function(data) {
         const ignoreQuestion = data.title ? false: true; // Don't create question if it's answered
-        console.log('Question state', ignoreQuestion);
+        //console.log('Question state', ignoreQuestion);
 
         isAnswered = false;
 
-        console.log('New question', data);
+        //console.log('New question', data);
 
         // Shuffle options [Not worth it to shuffle it in backend]
         !ignoreQuestion && shuffle(data.options);
@@ -381,7 +381,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 });
 
-                console.log(el.innerHTML);
+                //console.log(el.innerHTML);
             }
             elements[1].innerHTML = data.options[0]; // Set first option
             elements[2].innerHTML = data.options[1]; // Set second option
@@ -390,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 
-    socket.on('disconnect', function() {
+    /*socket.on('disconnect', function() {
         console.log("Disconnect")
-    });
+    });*/
 });
