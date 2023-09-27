@@ -1,8 +1,10 @@
+import fs from "fs/promises"
+
 import { getNamespace } from "./websockets/game_socket.js";
 
 import { updateTopPlayers, updateLeaderboard } from "./leaderboard.js";
 
-import { getNamespace as gameNamespace } from "./websockets/game_socket.js";
+//import { getNamespace as gameNamespace } from "./websockets/game_socket.js";
 import { getNamespace as leaderboard_socket } from "./websockets/leaderboard_socket.js";
 import { getNamespace as admin_socket } from "./websockets/admin_socket.js";
 
@@ -15,6 +17,7 @@ let gameTimer
 
 // Questions
 import { getQuestions, getAnswers } from "./questions.js";
+import { randomStr } from "./utils.js";
 
 export function checkQuestionSet(setNumber) {
     return getQuestions()[setNumber];
@@ -142,6 +145,15 @@ export async function finishGame() {
 export async function resetInfo() {
     const io = getNamespace();
 
+    // Save player information before deletion
+    let savedData = [];
+    for(let playerId in playersConnected) {
+        const { session, ...data } = playersConnected[playerId];
+        savedData.push(data); 
+    }
+
+    await fs.writeFile(`./data/${randomStr(8)}.json`, JSON.stringify(savedData, null, 4));
+
     // Reset player information
     playersCounter = 0; // Reset player counter
     currentQuestion = 0; // Reset question counter
@@ -201,7 +213,7 @@ export function acceptPlayer(ID) {
     playerData.session.join('contestant'); // Set client websocket as contestant
 
     playerData.session.emit('enjaz:joined', { game_state: getGameState(), first_time: true });
-    gameNamespace().emit('enjaz:updating', { type: "connected_users", connected_users: ++playersCounter });
+    getNamespace().emit('enjaz:updating', { type: "connected_users", connected_users: ++playersCounter });
 
     return true;
 }
