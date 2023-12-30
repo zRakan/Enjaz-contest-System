@@ -8,15 +8,19 @@
 </head>
 <body>
     <div id="run_app">
-        <div id="start-container">
-            <button>تشغيل</button>
-            <input type="input" placeholder="رقم الأسئلة" value="1">
+        <div class="button-container" id="points-container">
+            <button id="stop-btn">إيقاف الجولة</button>
+            <button id="reset-btn">تصفير النقاط</button>
         </div>
-
-        <button id="reset-btn">تصفير النقاط</button>
+        <div class="button-container" id="start-container">
+            <button id="start-btn">تشغيل</button>
+            <button id="bell-btn">إعادة تفعيل الجرس</button>
+        </div>
     </div>
 
-    <div id="Contestants">
+    <p>لوحة طلبات الدخول</p>
+
+    <div id="Contestants" class="userList">
         <!--<li id="information">
             <ul><button>عدم القبول</button></ul>
             <ul><button>قبول</button></ul>
@@ -132,7 +136,10 @@
         </li>-->
     </div>
 
-    <button id="accept_all">قبول الكل</button>
+    <p>المشاركين</p>
+    <div id="bellUsers" class="userList"></div>
+
+    <!--<button id="accept_all">قبول الكل</button>-->
 
     <!-- Notifications -->
     <div class="notification-container"></div>

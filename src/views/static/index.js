@@ -68,8 +68,9 @@ let containerInput;
 let contestantContainer;
 let currentState;
 let dynamicElement;
-let questionElement;
 let cooldownText;
+let bellBtn;
+
 
 let startingTime;
 const formatter = new Intl.RelativeTimeFormat('ar');
@@ -103,51 +104,8 @@ function setGameTimer(timer) {
     contestantContainer.appendChild(cooldownText);
 }
 
-function createQuestion(title, options, timer) {
-    questionElement = document.createElement('div');
-    questionElement.setAttribute('id', 'question-container');
-
-    if((/[a-zA-Z]/).test(title.charAt(0)))
-        questionElement.style.direction = 'ltr';
-
-    // Creating question title
-    const questionTitle = document.createElement('p');
-    questionTitle.innerHTML = title;
-    questionElement.appendChild(questionTitle);
-
-    // Creating options
-    for(let option of options) {
-        const btn = document.createElement('button');
-        btn.innerHTML = option;
-
-        questionElement.appendChild(btn);
-    }
-
-    // Force create 3rd option (Hidden)
-    if(options.length < 3) {
-        const btn = document.createElement('button');
-        btn.classList.add('hidden');
-        
-        questionElement.appendChild(btn);
-    }
-
-    contestantContainer.appendChild(questionElement);
-
-    // Cooldown
-    setGameTimer(timer);
-}
-
 function changeGameState(state, data) {
     currentState = state;
-
-    if(state != 'started' && questionElement) {
-        questionElement.remove();
-        questionElement = null;
-
-        // Cooldown removal
-        cooldownText.remove();
-        cooldownText = null;
-    }
 
     switch(state) {
         case 'not-started':
@@ -160,6 +118,10 @@ function changeGameState(state, data) {
 
             // Bring back input
             containerInput.classList.remove('hidden');
+
+            // Hide bell
+            bellBtn.classList.add("hidden");
+            bellBtn.classList.remove("unavailable");
 
             break;
         case "waiting":
@@ -190,8 +152,6 @@ function changeGameState(state, data) {
                 contestantContainer.appendChild(dynamicElement);
             }
 
-            //console.log("Starting...");   
-
             if(!data || !data.current_timer) {
                 startingTime = new Date();
                 startingTime.setSeconds(startingTime.getSeconds() + 10);
@@ -215,6 +175,9 @@ function changeGameState(state, data) {
                 dynamicElement.remove(); // Remove current element
                 dynamicElement = null;
             }
+
+            bellBtn.classList.remove("hidden");
+
 
             break;
         case 'not-joined':
@@ -250,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function() {
         containerInput = document.querySelector('#start-game');
         const connectedButton = document.querySelector('#contestant-submit');
         const nameInput = document.querySelector('#contestant-name');
-        const sIdInput = document.querySelector('#contestant-id');
+        bellBtn = document.querySelector("#bell_img");
 
     let cooldownActions = false;
 
@@ -258,21 +221,13 @@ document.addEventListener("DOMContentLoaded", function() {
         if(cooldownActions) return showNotification("يجب عليك الإنتظار...", 'warning');        
         if(isConnected) return;
 
-
-
         const nameVal = nameInput.value;
-        const sIdVal = sIdInput.value;
 
         // If input(s) is empty
         if(!nameVal) return showNotification("يجب عليك كتابة اسمك", "failed");
         if(!(/^[أ-ي ]+$/).test(nameVal)) return showNotification("سرّك في نيويورك اكتب اسمك بالعربي", "failed"); // Name validation
 
-
-        if(!sIdVal) return showNotification("يجب عليك كتابة رقمك الجامعي", "failed");
-        if(!(/^[0-9]+$/).test(sIdVal)) return showNotification("الرقم الجامعي يتكون من ارقام فقط", "failed");
-        if(sIdVal.length != 9) return showNotification("الرقم الجامعي يجب ان يكون مكوّن من 9 خانات", "failed");
-
-        socket.emit("enjaz:new-contestant", { name: nameVal, sid: sIdVal })
+        socket.emit("enjaz:new-contestant", { name: nameVal })
         showNotification("يتم انتظار القبول...");
         containerInput.classList.add('hidden'); // Hide inputs until is reject
 
@@ -282,6 +237,14 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(function() {
             cooldownActions = false;
         }, 5000);
+    });
+
+    bellBtn.addEventListener("click", function() {
+        console.log("Test");
+
+        socket.emit("enjaz:bell", function(resp) {
+            bellBtn.classList[resp.bell == false ? "add" : "remove"]("unavailable");
+        });
     });
 
     // Client is waiting
@@ -310,12 +273,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
         changeGameState(data.game_state, additionalData);
 
+        console.log('joined', data);
+        setTimeout(function() {
+            bellBtn.classList[data.bell_state == false ? "add" : "remove"]("unavailable");
+        }, 50);
+
         if(data.first_time) // Joined first time (Excluded re-join[refresh])
             showNotification("تم القبول", "success");
     });
 
     socket.on('enjaz:updating', function(data) {
-        //console.log(data);
+        console.log('updating', data);
+        console.log(data.bell_state == false);
 
         switch(data.type) {
             case 'connected_users':
@@ -331,62 +300,15 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 changeGameState(data.current_state);
                 break;
+            case 'bell_state':
+                bellBtn.classList[data.bell_state == false ? "add" : "remove"]("unavailable");
+            
+                break;
         }
     });
 
     socket.on('enjaz:question', function(data) {
-        const ignoreQuestion = data.title ? false: true; // Don't create question if it's answered
-        //console.log('Question state', ignoreQuestion);
-
-        isAnswered = false;
-
-        //console.log('New question', data);
-
-        // Shuffle options [Not worth it to shuffle it in backend]
-        !ignoreQuestion && shuffle(data.options);
-
-        if(!questionElement && !ignoreQuestion)
-            createQuestion(data.title, data.options, data.current_timer);
-        else startingTime = new Date(data.current_timer); // Update time only if question created
-
-        if(!ignoreQuestion) {
-            questionElement.classList.remove('hidden');
-            questionElement.style.direction = ((/[a-zA-Z]/).test(data.title.charAt(0))) ? 'ltr' : 'rtl'; // Change direction of question based on language of title
-            
-            const elements = questionElement.children;
-            elements[0].innerHTML = data.title; // Set question title
-
-            // Hide third option (If options are 2)
-            if(data.options.length == 2) elements[3].classList.add('hidden');
-            else elements[3].classList.remove('hidden');
-
-            for(let option in data.options) {
-                option = parseInt(option);
-
-                const el = elements[option+1];
-
-                el.innerHTML = data.options[option];
-                setEventHandler(el, option, 'click', function() {
-                    if(isAnswered) return showNotification('الرجاء الإنتظار', 'warning');
-                    isAnswered = true;
-                
-                    questionElement.classList.add('hidden');
-                    
-                
-                    showNotification('تم إرسال اجابتك')
-                    socket.emit('enjaz:answer', { id: data.id, answer: el.innerHTML }, function(resp) {
-                        if(resp.good)
-                            showNotification('جوابك صحيح', 'success');
-                        else showNotification('جوابك خاطئ', 'failed');
-                    });
-                });
-
-                //console.log(el.innerHTML);
-            }
-            elements[1].innerHTML = data.options[0]; // Set first option
-            elements[2].innerHTML = data.options[1]; // Set second option
-        } else
-            setGameTimer(data.current_timer);
+        console.log("Test");
     });
 
 

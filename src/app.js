@@ -1,5 +1,12 @@
 import express from "express";
+
+import sqlite from "better-sqlite3";
 import session from "express-session";
+
+import SqliteStore from "better-sqlite3-session-store";
+let SqliteStoreX = SqliteStore(session);
+
+const db = new sqlite("sessions.db");
 
 // Reading & Writing files [fs]
 import fs from "fs";
@@ -21,6 +28,15 @@ const PORT = process.env.SSL_KEY != "" ? 8443 : 80; // Change to 80 if SSL not p
 // Initialize middle-ware(s)
 const sessionMD = session({ // Session system
     secret: 'enjaz-STCO',
+
+    store: new SqliteStoreX({
+        client: db, 
+        expired: {
+            clear: true,
+            intervalMs: 86400000
+        }
+    }),
+
     resave: true,
     saveUninitialized: true,
     //cookie: { secure: true }
@@ -93,20 +109,31 @@ app.post('/admin/:api_key/reject', checkAuthorization, function(req, res) {
     res.send({ status: game.rejectPlayer(ID) ? 'success' : 'failed' });
 });
 
+app.post('/admin/:api_key/givePoints', checkAuthorization, function(req, res) {
+    console.log(req.body);
+    
+    const ID = req.body["ID"];
+    if(!ID) return res.sendStatus(400);
+    
+    res.send({ status: game.playerAnswer(ID) ? 'success' : 'failed' });
+});
+
+app.post('/admin/:api_key/resetBell', checkAuthorization, function(req, res) {
+    console.log(req.body);
+    
+    console.log("Bell has been resetted");
+    res.send({ status: game.resetBell() ? 'success' : 'failed' });
+});
+
 // Static admin files
 app.use('/admin/:api_key/', checkAuthorization, express.static('./src/views/static_admin'));
 
-app.post('/start/:question_id', checkAuthorization, function(req, res) {
-    let questionId = req.params['question_id'];
-    if(!questionId) res.sendStatus(403);
-
-    questionId = parseInt(questionId) - 1;
-    if(!game.checkQuestionSet(questionId)) return res.send({ status: 'error', message: 'رقم الأسئلة خطأ' });
+app.post('/start/', checkAuthorization, function(req, res) {
     if(game.getNumberOfPlayers() <= 0) return res.send({ status: 'error', message: 'لا يوجد عدد لاعبين كافين' });
     if(game.getGameState() != 'waiting') return res.send({ status: 'error', message: 'توجد جولة فعّالة' });
 
     res.send({ status: 'success' });
-    game.startGame(questionId);
+    game.startGame();
 });
 
 app.post('/stop', checkAuthorization, async function(req, res) {

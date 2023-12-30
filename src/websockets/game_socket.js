@@ -22,15 +22,13 @@ export default async function(io) {
             game.updatePlayerSocket(ID, ws);
 
             if(game.isPlayerJoined(ID)) {
-                let joinPayload = { game_state: game.getGameState() };
+                let joinPayload = { game_state: game.getGameState(), bell_state: game.isPlayerBellAvailable(ID) };
 
                 if(game.getGameState() == 'starting') // If game is starting, getting the starting timer
                     joinPayload['current_timer'] = game.getGameTimer();
 
                 ws.join('contestant'); // Set client websocket as contestant
                 ws.emit('enjaz:joined', joinPayload);
-
-                if(game.getGameState() == 'started') game.constructPlayerQuestion(ID);
             } else {
                 ws.emit('enjaz:waiting');
             }
@@ -44,10 +42,9 @@ export default async function(io) {
             if(game.isPlayerJoined(ID) || game.getPlayerId(ID)) return;
 
             const NAME = data.name;
-            const SID = data.sid;
 
             // Check if 
-            if(!utils.validateInput("arabic", NAME) || !utils.validateInput("numbers", SID) || SID.length != 9) {
+            if(!utils.validateInput("arabic", NAME)) {
                 console.log("[Socket-Validator] Disconnected client with bad input(s)", ws.id);
                 return ws.disconnect(true);
             }
@@ -80,29 +77,22 @@ export default async function(io) {
                 session: ws,
                 id: utils.randomStr(16),
                 name: NAME,
-                sId: SID,
 
-                questions: {},
-                answers: {},
-
-                points: 0
+                points: 0,
+                bell: false,
+                pos: 0
             });
 
             console.log("Added contestant")
         });
 
-        // New answer
-        ws.on('enjaz:answer', function(data, callback) {
-            if(!game.isPlayerJoined(ID)) return;
-            if(!data.id || !data.answer) {
-                console.log("[Socket-Validator] Disconnected client with bad input(s)", ws.id);
-                return ws.disconnect(true);
-            };
+        // Bell alert
+        ws.on('enjaz:bell', function(cb) {
+            if(!game.isPlayerJoined(ID) || !game.isPlayerBellAvailable(ID)) return;
 
-            console.log("Answered");
-            callback({
-                good: game.playerAnswer(ID, { id: data.id, answer: data.answer })
-            });
+            game.setPlayerBell(ID, true); // Indicate the player pressed the bell
+
+            cb({ bell: game.isPlayerBellAvailable(ID) });
         });
 
         // Websocket disconnected

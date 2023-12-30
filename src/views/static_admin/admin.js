@@ -51,6 +51,54 @@ function showNotification(message, status) {
 */
 
 let contestantDiv = document.querySelector('#Contestants');
+let bellDiv = document.querySelector('#bellUsers');
+console.log(contestantDiv, bellDiv);
+
+// Bell users
+const ptsBtn = document.createElement('button');
+      ptsBtn.innerHTML = 'اعطاء النقطة';
+
+const userBellDiv = document.createElement('li');
+      userBellDiv.setAttribute('id', 'information');
+      userBellDiv.appendChild(document.createElement('ul').appendChild(ptsBtn))
+
+function createBellUser(id, name) {
+    const contestantInformation = userBellDiv.cloneNode(true);
+    const children = contestantInformation.children;
+
+    children[0].addEventListener('click', async function() {
+        let resp = await fetch('givePoints', {
+            method: "POST",
+
+            body: JSON.stringify({
+                'ID': id,
+            }),
+
+            headers: {
+                'Content-Type':'application/json'
+            }
+        });
+
+        if(resp.status == 200) {        
+            resp = await resp.json();   
+            console.log(resp);
+            
+            contestantInformation.remove(); // Remove information div
+            showNotification(resp.status == 'success' ? 'تم إعطاء النقطة للاعب' : 'حدث خطأ', resp.status);
+        } else showNotification('حدث خطأ', 'failed');
+    });
+
+    // Add name
+        const nameUL = document.createElement('ul');
+        nameUL.setAttribute('id', 'name_contestant')
+        nameUL.innerHTML = name;
+
+    // Append name
+        contestantInformation.appendChild(nameUL);
+
+    // Append to contestantDiv
+        bellDiv.appendChild(contestantInformation);
+}
 
 const informationDiv = document.createElement('li');
       informationDiv.setAttribute('id', 'information');
@@ -64,7 +112,7 @@ for(let word of ["عدم القبول", "قبول"]) {
     informationDiv.appendChild(ul);
 }
 
-function createContestant(id, name, studentId) {
+function createContestant(id, name) {
     const contestantInformation = informationDiv.cloneNode(true);
     const children = contestantInformation.children;
 
@@ -110,21 +158,17 @@ function createContestant(id, name, studentId) {
             console.log(resp);
 
             contestantInformation.remove(); // Remove information div
+
             showNotification(resp.status == 'success' ? 'تم قبول اللاعب' : 'حدث خطأ', resp.status);
         } else showNotification('حدث خطأ', 'failed');
     });
-
-    // Add student number
-    const sIdUL = document.createElement('ul');
-    sIdUL.innerHTML = studentId;
 
     // Add name
     const nameUL = document.createElement('ul');
           nameUL.setAttribute('id', 'name_contestant')
           nameUL.innerHTML = name;
 
-    // Append student number & name
-    contestantInformation.appendChild(sIdUL);
+    // Append name
     contestantInformation.appendChild(nameUL);
 
     // Append to contestantDiv
@@ -138,14 +182,10 @@ document.addEventListener('DOMContentLoaded', function() {
     /* Static button [Start, Reset] */
     
     // Start button
-    const startBtn = document.querySelector('#start-container > button');
-    const questionInput = document.querySelector('#start-container > input');
+    const startBtn = document.querySelector('#start-btn');
 
     startBtn.addEventListener('click', async function() {
-        const inputVal = parseInt(questionInput.value);
-        if(!(/^[0-9]+$/).test(inputVal)) return showNotification("الرقم الجامعي يتكون من ارقام فقط", "failed");
-
-        let resp = await fetch(`/start/${inputVal}`, {
+        let resp = await fetch(`/start/`, {
             method: "POST",
 
             headers: {
@@ -161,6 +201,49 @@ document.addEventListener('DOMContentLoaded', function() {
             else showNotification(resp.message, 'failed');
 
         } else showNotification('حدث خطأ', 'failed');
+    });
+
+    // Stop Button
+    const stopBtn = document.querySelector('#stop-btn');
+
+    stopBtn.addEventListener('click', async function() {
+        let resp = await fetch(`/stop/`, {
+            method: "POST",
+
+            headers: {
+                'api_key': apiKey,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if(resp.status == 200) {
+            resp = await resp.json();
+            
+            if(resp.status == 'success') showNotification('تم إنهاء الجولة', 'success');
+            else showNotification(resp.message, 'failed');
+
+        } else showNotification('حدث خطأ', 'failed');
+    });
+
+    // Reset bell butoon
+    const billBtn = document.querySelector('#bell-btn');
+    billBtn.addEventListener('click', async function() {
+        let resp = await fetch('resetBell', {
+            method: "POST",
+
+            headers: {
+                'Content-Type':'application/json'
+            }
+        });
+
+        if(resp.status == 200) {        
+            resp = await resp.json();        
+
+            [...bellDiv.children].forEach(e => e.remove());
+
+            showNotification(resp.status == 'success' ? 'تم إعادة فتح الجرس' : 'حدث خطأ', resp.status);
+        } else showNotification('حدث خطأ', 'failed');
+
     });
 
     // Reset button
@@ -196,7 +279,30 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(data);
     
         for(let player of data.players) {
-            createContestant(player.id, player.name, player.studentId);
+            createContestant(player.id, player.name);
         }
+    });
+
+    // New contestant bell
+    socket.on('enjaz:contestant:bell', function(data) {
+        console.log(data);
+    
+        //  Sort players by pos
+        if(data.players.length > 1)
+            data.players = data.players.sort((a, b) => a.pos - b.pos);
+
+        for(let player of data.players) {
+            createBellUser(player.id, player.name);
+        }
+    });
+
+    // Remove all non-accepted contestants
+    socket.on('enjaz:contestant:remove', function() {
+        [...contestantDiv.children].forEach(e => e.remove());
+    });
+
+    // Remove all contestants that pressed the bell
+    socket.on('enjaz:reset:bell', function() {
+        [...bellDiv.children].forEach(e => e.remove());
     });
 });

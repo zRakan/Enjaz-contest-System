@@ -15,81 +15,22 @@ let playersConnected = {};
 let playersCounter = 0;
 let gameTimer
 
-// Questions
-import { getQuestions, getAnswers } from "./questions.js";
+// Bell state
+let currentBell = 0;
+
+
 import { randomStr } from "./utils.js";
 
-export function checkQuestionSet(setNumber) {
-    return getQuestions()[setNumber];
-}
-
-function shuffle(questionSet) {
-    let array = [...getQuestions()[questionSet]];
-
-    let currentIndex = array.length, randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-  
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex], array[currentIndex]];
-    }
-
-    return array;
-}
-
 // Game management
-let currentQuestion = 0;
-export function getGameQuestion() {
-    return currentQuestion-1;
-}
-
-function nextQuestion(questionSet) {
-    if(currentQuestion+1 > getQuestions()[questionSet].length) return finishGame(); // Stop game if reached last ques
-    currentQuestion++;
-    return true;
-}
-
-export function constructPlayerQuestion(playerId) {
-    const currentQuestion = getGameQuestion();
-    const playerData = playersConnected[playerId];
-    if(!playerData) return; // Ignore player id without object
-
-    const playerQuestions = playerData.questions[currentQuestion];
-
-    let payload = {
-        current_timer: getGameTimer()
-    };
-
-    if(!playerData.answers[playerQuestions.id]) { // Check if current question is answered or not for specified user
-        // Push player questions data
-        payload = { ...payload,
-            title: playerQuestions.title,
-            options: playerQuestions.options,
-            id: playerQuestions.id,    
-        }
-    }
-
-    // Send to client
-    playersConnected[playerId].session.emit('enjaz:question', payload);
-}
-
-export function startGame(questionSet) {
+export function startGame() {
     const io = getNamespace();
 
-    // Shuffling question set for each player
     for(let playerId in playersConnected) {
         const player = playersConnected[playerId];      
         if(!player.accept) { // Ignore & Delete non-accepted players
             delete playersConnected[playerId];
             continue; 
         }
-        
-        player.questions = shuffle(questionSet);
     }
 
     gameTimer = new Date();
@@ -105,31 +46,11 @@ export function startGame(questionSet) {
     // Update leaderboard state
     updateLeaderboard('started');
 
+    // Remove all elements from admin page
+    admin_socket().emit('enjaz:contestant:remove');
 
-
-    // Start game after 10 seconds
-    const interval = setTimeout(async function() {
-        if(getGameState() != 'starting') return clearTimeout(interval);
-
+    setTimeout(function() {
         changeGameState('started', io);
-
-        const gameInterval = setInterval(function run() {
-            if(getGameState() != 'started') return clearInterval(gameInterval);
-
-            updateTopPlayers();
-
-            // Next question
-            if(nextQuestion(questionSet)) { // If returns true then it has question
-                // Start cooldown
-                gameTimer = new Date();
-                gameTimer.setSeconds(gameTimer.getSeconds() + 10);
-
-                // Send questions to clients
-                for(let playerId in playersConnected)
-                    constructPlayerQuestion(playerId);
-            }
-            return run;
-        }(), 10000);
     }, 10000);
 }
 
@@ -157,10 +78,11 @@ export async function resetInfo() {
 
     // Reset player information
     playersCounter = 0; // Reset player counter
-    currentQuestion = 0; // Reset question counter
     playersConnected = {}; // Reset list
     io.emit('enjaz:updating', { type: "connected_users", connected_users: getNumberOfPlayers() });
 
+    // Reset bell state
+    currentBell  = 0;
 
     // Kick contestants from 'contestant' channel
     const contestants = await io.to('contestant').fetchSockets(); 
@@ -194,16 +116,56 @@ export function changeGameState(state, io) {
 
 // Player information
 
-/* Accept/Reject functions */
-export function getNonAcceptedPlayers() {
-    let nonAcceptedPlayers = [];
+/* Bell */
+export function setPlayerBell(id, state) {
+    const player = playersConnected[id]
+    
+    if(player) {
+        player.bell = state;
+        player.pos = ++currentBell;
 
-    for(let playerId in playersConnected) {
-        const player = playersConnected[playerId];    
-        !player.accept && nonAcceptedPlayers.push({ id: playerId, name: player.name, studentId: player.sId })
+        admin_socket().emit("enjaz:contestant:bell",  { players: [
+            { id: id, name: player.name, pos: player.pos }
+        ]})
+
+        return true;
     }
 
-    return nonAcceptedPlayers;    
+    return false;
+}
+
+export function isPlayerBellAvailable(id) {
+    return playersConnected[id] && !playersConnected[id].bell;
+}
+
+export function resetBell() {
+    for(let playerId in playersConnected) {
+        const player = playersConnected[playerId];    
+        player.bell = false;
+        player.pos = 0;
+    }
+
+    currentBell = 0;
+
+    getNamespace().to('contestant').emit('enjaz:updating', { type: "bell_state", bell_state: true });
+    return true;
+}
+
+
+/* Accept/Reject functions */
+export function getPlayersInfo() {
+    let nonAcceptedPlayers = [];
+    let bellUsers = [];
+
+    for(let playerId in playersConnected) {
+        const player = playersConnected[playerId];
+        const playerObj = { id: playerId, name: player.name };
+
+        !player.accept && nonAcceptedPlayers.push(playerObj)
+        player.bell && bellUsers.push({...playerObj, pos: player.pos });
+    }
+
+    return [nonAcceptedPlayers, bellUsers];    
 }
 
 export function acceptPlayer(ID) {
@@ -267,7 +229,7 @@ export function playerJoined(id, data) {
 
     // Send to admin websocket
     admin_socket().emit('enjaz:contestant:new', { players: [
-        { id: id, name: data.name, studentId: data.sId }
+        { id: id, name: data.name }
     ]});
 
     return playersCounter;
@@ -281,32 +243,19 @@ export function playerLeft(id) {
     return playersCounter;
 }
 
-
-function playerQuestionExists(playerQuestions, id) {
-    for(let question of playerQuestions) if(question.id == id) return true;
-    return false;
-}
-
-export function playerAnswer(id, data) {
+export function playerAnswer(id) {
     const playerData = playersConnected[id];
 
-    const question = parseInt(data.id);
-    const answer = data.answer;
+    if(playerData) {
+        playerData.points++;
 
-    if(playerQuestionExists(playerData.questions, question)) { // Check if question id is in player object
-        if(question && !playerData.answers[question]) { // Check if question is answered before or not
-            playerData.answers[question] = true; // Indicate this question has been answered
-        
-            if(answer == getAnswers()[question]) {
-                const remainingSeconds = ((getGameTimer() - new Date()) / 1000) | 0; // Using bitwise to truncate decimal points more performant than 'Math'
-                const pointsAcquired = 1 + (remainingSeconds / 10);
+        // Update leaderboard
+        updateTopPlayers();
 
-                console.log(remainingSeconds, 1+(remainingSeconds/10))
-                playerData.points = parseFloat((playerData.points + pointsAcquired).toFixed(10));
-                return true;
-            }
-        }
-    }
+        // Clear bell users from admin dashboard
+        admin_socket().emit('enjaz:reset:bell');
+        resetBell();
+    } else return false;
 
-    return false;
+    return true;
 }

@@ -23,8 +23,15 @@ export default function(io) {
 
         console.log("[ADMIN-SOCKET] Connected", ID);
 
+        const [nonAccepted, bellUsers] = game.getPlayersInfo()
+
+        console.log(nonAccepted, bellUsers)
+
         // Sending all non-accepted users
-        ws.emit('enjaz:contestant:new', { players: game.getNonAcceptedPlayers() });
+        ws.emit('enjaz:contestant:new', { players: nonAccepted });
+
+        // Sending all bell users
+        ws.emit('enjaz:contestant:bell', { players: bellUsers });
     });
 }
 

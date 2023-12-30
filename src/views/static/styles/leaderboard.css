@@ -48,8 +48,7 @@ header>h1 {
 
 
 .logos img {
-    height: 110px;
-    width: 305px;
+    width: 100px;
 }
 
 
@@ -276,8 +275,7 @@ footer p:nth-child(2) {
     
     
     .logos img {
-        height: 210px;
-        width: 455px;
+        width: 250px
     }
 
     .logos {       
