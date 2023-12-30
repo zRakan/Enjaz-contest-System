@@ -29,13 +29,16 @@ button {
     cursor: pointer;
 }
 
-/* Prevent scrolling by x-axis */
-body {
+body {    
+    /* Prevent scrolling by x-axis */
     overflow-x: hidden;
 }
 
 .img-bg {
-    position: fixed; 
+    background: rgb(9,38,53);
+    background: linear-gradient(90deg, rgba(9,38,53,1) 50%, rgba(27,66,66,1) 100%); 
+
+    position: fixed;
     top: 0; 
     left: 0;
 
@@ -61,7 +64,7 @@ header > h1 {
     
 
     font-family: 'montaser';
-    color: #144f43;
+    color: #5C8374;
     font-size: 80px;
     text-align: center;
 }
@@ -123,7 +126,7 @@ header > h1 {
 .contestant-container > p {
     text-align: center;
 
-    color: #144f43;
+    color: #5C8374;
     font-size: 16px;
 }
 
@@ -141,18 +144,8 @@ header > h1 {
 #number_contestants {
     text-align: center;
 
-    color: #144f43;
+    color: #9EC8B9;
     font-size: 20px;
-}
-
-#bell_button {
-    border: none;
-    cursor: pointer;
-    appearance: none;
-    background-color: red;
-
-    background: inherit;
-    object-fit: cover;
 }
 
 #bell_img {
@@ -205,7 +198,7 @@ header > h1 {
 
     color: white;
     border-radius: 50px;
-    background-color: #357a4d;
+    background-color: #5C8374;
     margin-top: 15px;
     box-shadow: 0px 6px 20px 1px #0000005f;
 }
@@ -259,7 +252,7 @@ footer p {
     font-size: 15px;
 
     position: relative;
-    color: #357a4d;
+    color: #9EC8B9;
 }
 
 footer p:nth-child(2) {

@@ -5,10 +5,8 @@
 
 
 body {
-    background-image: url('../assets/background_enjaz.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100% 100%;
+    background: rgb(9,38,53);
+    background: radial-gradient(circle, rgba(9,38,53,1) 50%, rgba(27,66,66,1) 100%); 
     font-family: 'montaser';
 }
 
@@ -26,7 +24,7 @@ header>h1 {
     transform: translate(-50%);
     /* Force center */
 
-    color: #144f43;
+    color: #9EC8B9;
     font-size: 80px;
     text-align: center;
 }
@@ -70,7 +68,7 @@ header>h1 {
     left: 50%;
     transform: translate(-50%);
 
-    color: #357a4d;
+    color: #9EC8B9;
 
 
     text-align: center;
@@ -122,8 +120,8 @@ header>h1 {
 #information_leaderborad {
     padding: 0 5px 0px 5px;
 
-    color: #357a4d;
-    border-bottom: #357a4d groove 1px;
+    color: white;
+    border-bottom: #9EC8B9 groove 1px;
 
     display: flex;
     gap: 19%;
@@ -132,7 +130,7 @@ header>h1 {
 
 #students_contestant {
     text-align: center;
-    color: #357a4d;
+    color: white;
 
     height: 48px;
 
@@ -240,7 +238,7 @@ footer p {
     font-size: 15px;
 
     position: relative;
-    color: #357a4d;
+    color: #9EC8B9;
 }
 
 footer p:nth-child(2) {
