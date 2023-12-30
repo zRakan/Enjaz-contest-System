@@ -1,5 +1,12 @@
 import express from "express";
+
+import sqlite from "better-sqlite3";
 import session from "express-session";
+
+import SqliteStore from "better-sqlite3-session-store";
+let SqliteStoreX = SqliteStore(session);
+
+const db = new sqlite("sessions.db");
 
 // Reading & Writing files [fs]
 import fs from "fs";
@@ -20,7 +27,16 @@ const PORT = process.env.SSL_KEY != "" ? 8443 : 80; // Change to 80 if SSL not p
 
 // Initialize middle-ware(s)
 const sessionMD = session({ // Session system
-    secret: 'enjaz-STCO',
+    secret: 'enjaz-devfest',
+
+    store: new SqliteStoreX({
+        client: db, 
+        expired: {
+            clear: true,
+            intervalMs: 86400000
+        }
+    }),
+
     resave: true,
     saveUninitialized: true,
     //cookie: { secure: true }
