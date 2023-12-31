@@ -23,7 +23,7 @@ import { logger } from "./logger.js";
 
 
 const app = express(); // Creating App
-const PORT = process.env.SSL_KEY != "" ? 8443 : 80; // Change to 80 if SSL not provided
+const PORT = process.env.SSL_KEY != "" ? 2083 : 80; // Change to 80 if SSL not provided
 
 // Initialize middle-ware(s)
 const sessionMD = session({ // Session system
