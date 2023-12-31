@@ -64,7 +64,7 @@ for(let word of ["عدم القبول", "قبول"]) {
     informationDiv.appendChild(ul);
 }
 
-function createContestant(id, name, studentId) {
+function createContestant(id, name) {
     const contestantInformation = informationDiv.cloneNode(true);
     const children = contestantInformation.children;
 
@@ -114,17 +114,12 @@ function createContestant(id, name, studentId) {
         } else showNotification('حدث خطأ', 'failed');
     });
 
-    // Add student number
-    const sIdUL = document.createElement('ul');
-    sIdUL.innerHTML = studentId;
-
     // Add name
     const nameUL = document.createElement('ul');
           nameUL.setAttribute('id', 'name_contestant')
           nameUL.innerHTML = name;
 
-    // Append student number & name
-    contestantInformation.appendChild(sIdUL);
+    // Append name
     contestantInformation.appendChild(nameUL);
 
     // Append to contestantDiv
@@ -196,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(data);
     
         for(let player of data.players) {
-            createContestant(player.id, player.name, player.studentId);
+            createContestant(player.id, player.name);
         }
     });
 });

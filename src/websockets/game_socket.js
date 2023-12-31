@@ -44,10 +44,9 @@ export default async function(io) {
             if(game.isPlayerJoined(ID) || game.getPlayerId(ID)) return;
 
             const NAME = data.name;
-            const SID = data.sid;
 
             // Check if 
-            if(!utils.validateInput("arabic", NAME) || !utils.validateInput("numbers", SID) || SID.length != 9) {
+            if(!utils.validateInput("arabic", NAME)) {
                 console.log("[Socket-Validator] Disconnected client with bad input(s)", ws.id);
                 return ws.disconnect(true);
             }
@@ -80,7 +79,6 @@ export default async function(io) {
                 session: ws,
                 id: utils.randomStr(16),
                 name: NAME,
-                sId: SID,
 
                 questions: {},
                 answers: {},

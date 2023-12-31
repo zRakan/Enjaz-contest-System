@@ -200,7 +200,7 @@ export function getNonAcceptedPlayers() {
 
     for(let playerId in playersConnected) {
         const player = playersConnected[playerId];    
-        !player.accept && nonAcceptedPlayers.push({ id: playerId, name: player.name, studentId: player.sId })
+        !player.accept && nonAcceptedPlayers.push({ id: playerId, name: player.name })
     }
 
     return nonAcceptedPlayers;    
@@ -267,7 +267,7 @@ export function playerJoined(id, data) {
 
     // Send to admin websocket
     admin_socket().emit('enjaz:contestant:new', { players: [
-        { id: id, name: data.name, studentId: data.sId }
+        { id: id, name: data.name }
     ]});
 
     return playersCounter;

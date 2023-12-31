@@ -250,7 +250,6 @@ document.addEventListener("DOMContentLoaded", function() {
         containerInput = document.querySelector('#start-game');
         const connectedButton = document.querySelector('#contestant-submit');
         const nameInput = document.querySelector('#contestant-name');
-        const sIdInput = document.querySelector('#contestant-id');
 
     let cooldownActions = false;
 
@@ -261,18 +260,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
         const nameVal = nameInput.value;
-        const sIdVal = sIdInput.value;
 
         // If input(s) is empty
         if(!nameVal) return showNotification("يجب عليك كتابة اسمك", "failed");
         if(!(/^[أ-ي ]+$/).test(nameVal)) return showNotification("سرّك في نيويورك اكتب اسمك بالعربي", "failed"); // Name validation
 
 
-        if(!sIdVal) return showNotification("يجب عليك كتابة رقمك الجامعي", "failed");
-        if(!(/^[0-9]+$/).test(sIdVal)) return showNotification("الرقم الجامعي يتكون من ارقام فقط", "failed");
-        if(sIdVal.length != 9) return showNotification("الرقم الجامعي يجب ان يكون مكوّن من 9 خانات", "failed");
-
-        socket.emit("enjaz:new-contestant", { name: nameVal, sid: sIdVal })
+        socket.emit("enjaz:new-contestant", { name: nameVal });
         showNotification("يتم انتظار القبول...");
         containerInput.classList.add('hidden'); // Hide inputs until is reject
 
