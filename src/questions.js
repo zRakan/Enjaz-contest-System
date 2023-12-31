@@ -1,909 +1,199 @@
 const questions = [
-    // First round
-    [
-    {
-        title: 'متى تم توحيد المملكة العربية السعوديه ؟  ',
-        options: ['1351', '1327', '1399'],
-        answer: '1351'
-    },
-  
-    {
-        title: ' عدد الملوك الذين حكموا المملكة العربية السعودية ؟',
-        options: ['5', '7', '8'],
-        answer: '7'
-    },
-  
-  
-    {
-        title: 'متى يتم الاحتفال باليوم الوطني السعودي ؟',
-        options: ['21sep', '24sep', '23sep'],
-        answer: '23sep'
-    },
+    [ // Round 1
+        {
+            title: "Which programming language is commonly used for web development?",
+            options: ["Python", "Ruby", "JavaScript"],
+            answer: "JavaScript"
+        },
 
-    {
-        title: 'كم عدد السنوات التي احتفلت بها المملكة العربية السعودية في يومها الوطني؟ ',
-        options: ['94', '100', '93'],
-        answer: '93'
-    },
-  
-    {
-        title: 'من هو مؤسس المملكة العربية السعودية',
-        options: [
-            'الملك فهد بن عبدالعزيز',
-            'الملك عبدالعزيز آل سعود',
-            'الملك سلمان بن عبدالعزيز'     
-        ],
+        {
+            title: "What is the main component of a computer's central processing unit (CPU)?",
+            options: ["Microprocessor", "Memory", "Graphics card"],
+            answer: "Microprocessor"
+        },
 
-        answer: 'الملك عبدالعزيز آل سعود'
-    },
-  
-    {
-        title: ' ماهي أعلى قمة جبلية في المملكة العربية السعودية',
-        options: [
-            'جبل طويق ',
-            'جبال السروات',
-            'جبل اللوز'     
-        ],
+        {
+            title: 'Which of the following is an example of an input device?',
+            options: ['Printer', 'Keyboard', 'Speakers'],
+            answer: 'Keyboard'
+        },
 
-        answer: 'جبل اللوز'  
-    },
-  
-    {
-        title: ' ما هي العملة المستخدمة في السعودية',
-        options: [
-            'الريال',
-            'الدرهم',
-            'الدولار'     
-        ],
-        answer: 'الريال'
-    },
-  
-  
-    {
-        title: '"بماذا لقّب الإعلام الغربي الملك عبدالعزيز بن عبدالرحمن ال سعود؟',
-        options: [
-            'نابليون العرب',
-            'المؤسس',
-            'ملك الجزيرة'
-        ],
-        answer: 'نابليون العرب'
-    },
-  
-  
-    {
-        title: 'من هو الشاعر الذي كتب كلمات النشيد الوطني؟',
-        options: [
-            'عبدالرحمن العشماوي',
-            'غازي القصيبي',
-            'إبراهيم خفاجي'
-        ],
-        answer: 'إبراهيم خفاجي'
-    },
-  
-  
-    {
-        title: 'بماذا شبّه ولي العهد محمد بن سلمان الشعب السعودي؟',
-        options: [
-            'جبال السودة',
-            'جبل طويق',
-            'جبال تهامه'
-        ],
-        answer: 'جبل طويق'
-    },
+        {
+            title: 'Which of the following is an example of a cloud storage service?',
+            options: ['Dropbox', 'Microsoft Word', 'VLC Media Player'],
+            answer: 'Dropbox'
+        },
 
-    {
-      title: 'من هو أول من أطلق عليه خادم الحرمين الشريفين بالمملكة ؟',
-      options: [
-        'الملك فهد بن عبدالعزيز',
-        'الملك عبدالله بن عبدالعزيز ',
-        'الملك خالد بن عبدالعزيز '
-      ],
-      answer: 'الملك فهد بن عبدالعزيز'
-    },
+        {
+            title: 'Which of the following is not a web browser?',
+            options: ['Google Chrome', 'Mozilla Firefox', 'Microsoft Excel'],
+            answer: 'Microsoft Excel'
+        },
 
+        {
+            title: 'Which company developed the first commercial microprocessor?',
+            options: ['Intel', 'Microsoft', 'IBM'],
+            answer: 'Intel'
+        },
 
-    {
-      title: 'ماذا ترمز النخلة الموجودة في علم المملكة العربية السعودية؟',
-      options: [
-        'الخير والازدهار ',
-        'النمو والكرم',
-        'جميع ما سبق'
-      ],
-      answer: 'جميع ما سبق'
-    },
-
-
-{
-      title: 'بماذا يرمز السيفان الموجودين على علم المملكة العربية السعودية؟',
-      options: [
-        'الوحدة والقوة ',
-        'الشجاعة',
-        'جميع ما سبق'
-      ],
-      answer: 'جميع ما سبق'
-    },
-
-    {
-        title: 'كم تبلغ مساحة الربع الخالي؟',
-        options: [
-            '650 الف كيلومتر مربع',
-            '430 الف كيلومتر مربع',
-            '220 الف كيلومتر مربع'
-        ],
-        answer: '650 الف كيلومتر مربع'
-    },
-
-    {
-        title: 'كم عدد المناطق الإدارية في المملكة؟',
-        options: [
-            '13 امارة',
-            '14 امارة',
-            '15 امارة'
-        ],
-        answer: '13 امارة'
-    },
-
-
-    {
-      title: ' مدينة سعودية عرفت باسم يثرب ؟',
-      options: [
-        'الطائف ',
-        'مكة المكرمة',
-        'المدينة المنورة'
-      ],
-      answer: 'المدينة المنورة'
-    },
-
-    {
-        title: 'ماذا يغلب على سطح المملكة العربية السعودية ؟',
-        options: [
-            'الصحاري',
-            'الجبال',
-            'جميع ما سبق'
-        ],
-        answer: 'جميع ما سبق'
-    },
-
-
-    {
-        title: 'ما هي الدولة التي تقع جنوب السعودية ؟',
-        options: [
-            'اليمن وعُمان',
-            'السودان',
-            'الاردن'
-        ],
-        answer: 'اليمن وعُمان'
-    },
-
-
-    {
-        title: 'ما هو نظام الحكم في السعودية ؟',
-        options: [
-            'الديموقراطية',
-            'الدستورية',
-            'الملكية'
-        ],
-        answer: 'الملكية'
-    },
-
-    {
-        title: 'من هو أول من أطلق عليه خادم الحرمين الشريفين بالمملكة ؟',
-        options: [
-            'الملك فهد بن عبدالعزيز',
-            'الملك عبدالله بن عبدالعزيز',
-            'الملك خالد بن عبدالعزيز'
-        ],
-        answer: 'الملك فهد بن عبدالعزيز'
-    },
+        {
+            title: 'What is the purpose of a firewall in network security?',
+            options: ['To protect against unauthorized access', 'To increase internet speed', 'To encrypt data transmissions'],
+            answer: 'To protect against unauthorized access'
+        }
     ],
+    [ // Round 2
+        {
+            title: "What is the primary purpose of a database in computer technology?",
+            options: ["Data storage", "Resource management", "User authentication"],
+            answer: "Data storage"
+        },
+        {
+            title: "What does HTML stand for?",
+            options: ["Hypertext Markup Language", "High Tech Markup Language", "Hyperlink and Text Markup Language"],
+            answer: "Hypertext Markup Language"
+        },
+        {
+            title: "What is the main purpose of CSS in web development?",
+            options: ["Styling and formatting", "Scripting and animation", "Data validation"],
+            answer: "Styling and formatting"
+        },
+        {
+            title: "Which JavaScript operator is used to assign a value to a variable?",
+            options: ["+", "-", "*"],
+            answer: "="
+        },
+        {
+            title: "What is the main purpose of a router in a computer network?",
+            options: ["Connect multiple devices", "Manage network access", "Provide Wi-Fi"],
+            answer: "Connect multiple devices"
+        },
 
+        {
+            title: "Which HTML tag is used to create a new paragraph?",
+            options: ["<p>", "<div>", "<span>"],
+            answer: "<p>"
+        },
 
-    // Second round
-    [
-    {
-        title: 'ماذا ترمز النخلة الموجودة في علم المملكة العربية السعودية؟',
-        options: [
-            'الخير والازدهار',
-            'النمو والكرم',
-            'جميع ما سبق'
-        ],
-        answer: 'جميع ما سبق'
-    },
-  
-    {
-        title: 'بماذا يرمز السيفان الموجودين على علم المملكة العربية السعودية؟',
-        options: [
-          'الوحدة والقوة ',
-          'الشجاعة',
-          'جميع ما سبق'
-        ],
-        answer: 'جميع ما سبق'
-    },
-  
-    {
-        title: 'أين تقع المملكة العربية السعودية ؟',
-        options: [
-            'قارة آسيا',
-            'السعودية لن تقع',
-            'جميع ما سبق'
-        ],
-        answer: 'جميع ما سبق'
-    },
-  
-    {
-        title: 'كم عدد المناطق الإدارية في المملكة؟',
-        options: [
-            '13 امارة',
-            '14 امارة',
-            '15 امارة'
-        ],
-        answer: '13 امارة'
-    },
-  
-    {
-        title: ' مدينة سعودية عرفت باسم يثرب ؟',
-        options: [
-            'الطائف',
-            'مكة المكرمة',
-            'المدينة المنورة'
-        ],
-        answer: 'المدينة المنورة'
-    },
-  
-    {
-        title: 'ماذا يغلب على سطح المملكة العربية السعودية ؟',
-        options: [
-            'الصحاري',
-            'الجبال',
-            'جميع ما سبق'
-        ],
-        answer: 'جميع ما سبق'
-    },
-  
-    {
-        title: 'ما هي الدولة التي تقع جنوب السعودية ؟',
-        options: [
-            'اليمن وعُمان',
-            'السودان',
-            'الاردن'
-        ],
-        answer: 'اليمن وعُمان'
-    },
-  
-    {
-        title: 'ما هو نظام الحكم في السعودية ؟',
-        options: [
-            'الديموقراطية',
-            'الدستورية',
-            'الملكية'
-        ],
-        answer: 'الملكية'
-    },
-
-    {
-        title: ' من هو أول سعودي يحصل على لقب أول رائد فضاء عربي و مسلم؟',
-        options: [
-            'الأمير سلطان بن سلمان',
-            'الأمير محمد بن سلمان',
-            'الأمير خالد بن سلمان '
-        ],
-        answer: 'الأمير سلطان بن سلمان'
-    },
-  
-    {
-        title: ' من هو أول حاكم سعودي دعا إلى التضامن الإسلامي؟',
-        options: [
-            'الملك عبدالعزيز',
-            'الملك سعود',
-            'الملك خالد '
-        ],
-        answer: 'الملك عبدالعزيز'
-    },
-  
-    {
-        title: ' ما هي أكبر مدينة في السعودية؟ ؟',
-        options: [
-            'الرياض',
-            'جده',
-            'المدينة المنورة'
-        ],
-        answer: 'الرياض'
-    },
-  
-    {
-        title: ' ما هو شعار اليوم الوطني 93 في المملكة العربية السعودية ؟',
-        options: [
-            'همة حتى القمة',
-            'هي لنا دار',
-            'نحلم ونحقق'
-        ],
-        answer: 'نحلم ونحقق'
-    },
-
-    {
-        title: 'من هو مؤسس المملكة العربية السعودية؟',
-        options: [
-            'عبدالعزيز بن عبدالرحمن آل سعود',
-            'سلمان بن عبدالعزيز آل سعود',
-            'فيصل بن عبدالعزيز آل سعود'
-        ],
-        answer: 'عبدالعزيز بن عبدالرحمن آل سعود'
-    },
-        
-        
-    {
-        title: 'في أي عام تأسست المملكة العربية السعودية رسميا؟',
-        options: ['1932', '1902', '1922'],
-        answer: '1932'
-    },
-        
-    {
-        title: 'أين تقع الرياض عاصمة المملكة العربية السعودية؟',
-        options: [
-            'وسط المملكة',
-            'شمال المملكة',
-            'جنوب المملكة'
-        ],
-        answer: 'وسط المملكة'
-    },
-        
-    {
-        title: "ما هي أول شركة نفط سعودية تأسست؟",
-        options: [
-            "أرامكو السعودية",
-            "سابك",
-            "المياه السعودية"
-        ],
-        answer: "أرامكو السعودية"
-    },
-        
-    {
-        title: 'ما هي أهم مدن المملكة العربية السعودية بعد الرياض؟',
-        options: [
-            'جدة',
-            'الدمام',
-            'أبها'
-        ],
-        answer: 'جدة'
-    },
-        
-    {
-        title: 'ما هو أعلى جبل في المملكة العربية السعودية؟',
-        options: [
-            'جبل سوداء',
-            'جبل حرة',
-            'جبل سلوى'
-        ],
-        answer: 'جبل سوداء'
-    },
-        
-    {
-        title: 'متى انضمت المملكة العربية السعودية للأمم المتحدة؟',
-        options: ['1945', '1955', '1965'],
-        answer: '1945'
-    },
-
-    {
-        title: "ما هو أول مطار دولي افتتح في المملكة العربية السعودية؟",
-        options: [
-            "مطار الملك عبدالعزيز الدولي بجدة",
-            "مطار الملك خالد الدولي بالرياض",
-            "مطار الملك فهد الدولي بالدمام"
-        ],
-        answer: "مطار الملك عبدالعزيز الدولي بجدة"
-    },
-
-],
-
-
-    // Third Round
-    [
-    {
-        title: "متى تم إنشاء أول جامعة سعودية؟",
-        options: ["1957", "1967", "1977"],
-        answer: "1957"
-    },
-        
-    {
-        title: "What is the extension of Java files?", 
-        options: [".java", ".js", ".class"],
-        answer: ".java"
-    },
-        
-    {
-        title: "Which of the following is not a Java feature?",
-        options: [
-            "Object-oriented",
-            "Assembly language",   
-            "Platform independent"
-        ],
-        answer: "Assembly language"
-    },
-        
-    {
-        title: "What is the main class in a Java program?",  
-        options: [
-            "MainClass",
-            "JavaClass",
-            "public static void main"
-        ],
-        answer: "public static void main"
-    },
-        
-    {
-        title: "Which package is pre-installed with JDK?",
-        options: [
-            "java.awt",
-            "java.io",
-            "javax.swing"
-        ],
-        answer: "java.lang"
-    },
-        
-    {
-        title: "Which of the following is a keyword in Java?",
-        options: [
-            "if", 
-            "phone",
-            "class"
-        ],
-        answer: "if"
-    },
-
-    {
-        title: "What is the use of finally block in Java?",
-        options: [
-            "Always execute some code after try-catch block",
-            "Handle exceptions",
-            "Initialize variables"
-        ],  
-        answer: "Always execute some code after try-catch block"
-    },
-    
-    {
-        title: "What are the different access specifiers in Java?",
-        options: [
-          "public, private, protected",
-          "public only",
-          "private, protected"  
-        ],
-        answer: "public, private, protected"
-    },
-    
-    {
-        title: "What is the use of instanceof operator in Java?",
-        options: [
-          "Check if an object is instance of a class", 
-          "Check if class exists",
-          "Both"
-        ],
-        answer: "Check if an object is instance of a class"
-    },
-
-    {
-        title: 'كم عدد الملوك الذين مروا على المملكة العربية السعودية ؟',
-        options: ['8', '7', '6'],
-        answer: '7'
-    },
-  
-    {
-        title: 'متى تم توحيد المملكة العربية السعودية ؟',
-        options: ['1351', '1327', '1352'],
-        answer: '1351'
-    },
-  
-    {
-        title: 'كم مرحلة مرت فيها السعودية ليتم توحيدها؟ ',
-        options: ['2', '3', '4'],
-        answer: '3'
-    },
-  
-    {
-        title: 'لماذا سميت السعودية بالسعودية ؟',
-        options: [
-            'نسب لسعود بن محمد بن مقرن ال سعود',
-            'نسب للملك عبد العزيز بن عبد الرحمن ال سعود',
-            'نسب للإمام محمد بن سعود'
-        ],
-        answer: 'نسب لسعود بن محمد بن مقرن ال سعود'
-    },
-  
-    {
-        title: 'كم عام مر منذ توحيد المملكة ؟',
-        options: ['89', '91', '93'],
-        answer: '93'
-    },
-  
-  
-    {
-        title: 'السيفين والنخلة ترمز لماذا ؟',
-        options: [
-            'لطبيعة المملكة وكثرة النخل فيها',
-            'بسبب الحروب',
-            'للقوة و والنماء'
-        ],
-        answer: 'للقوة و والنماء'
-    },
-  
-    {
-        title: 'من هو اخر ملك للسعودية ',
-        options: [
-            'الملك خالد',
-            'الملك سلمان',
-            'الملك عبدالعزيز'
-        ],
-        answer: 'الملك سلمان'
-    },
-  
-    {
-        title: 'من هو ولي العهد الحالي',
-        options: [
-            'الامير خالد بن سلمان',
-            'الامير سلمان بن محمد',
-            'الامير محمد بن سلمان'
-        ],
-        answer: 'الامير محمد بن سلمان'
-    },
-  
-    {
-        title: 'متى تم تعيين الامير محمد بن سلمان على ولاية العهد',
-        options: ['١٤٣٣هـ', '١٤٣٨هـ', '١٤٣٥هـ'],
-        answer: '١٤٣٨هـ'
-    },
-  
-    {
-        title: 'متى استلم الحكم الملك سلمان بن عبدالعزيز',
-        options: ['١٤٣٥هـ', '١٤٤٠هـ', '١٤٣٦هـ'],
-        answer: '١٤٣٦هـ'
-    },
-
-    {
-        title: `while(false) { print("SAUDI ARABIA"); } print("HAPPY SAUDI NATIONAL DAY");`,
-        options: [
-          'HAPPY SAUDI NATIONAL DAY',
-          'SAUDI ARABIA',
-          'ERROR'
-        ],
-        answer: 'HAPPY SAUDI NATIONAL DAY'
-    },
+        {
+            title: "Which web protocol is used for real-time communication, such as voice and video calls?",
+            options: ["RTSP", "SRTP", "WebRTC"],
+            answer: "WebRTC"
+        }
     ],
+    [ // Round 3
+        {
+            title: "What is the main purpose of a firewall in computer security?",
+            options: ["Protecting the network", "Managing network traffic", "Monitoring network usage"],
+            answer: "Protecting the network"
+        },
+        {
+            title: 'What does CPU stand for?',
+            options: ['Central Processing Unit', 'Computer Processing Unit', 'Central Power Unit', 'Computer Power Unit'],
+            answer: 'Central Processing Unit'
+        },
 
+        {
+            title: "Which web protocol is used for transferring hypertext documents (HTML and XML)?",
+            options: ["HTTP", "HTTPS", "FTP"],
+            answer: "HTTP"
+        },
+        {
+            title: "What is the main purpose of an API (Application Programming Interface) in software development?",
+            options: ["Providing a standard interface for developers", "Managing software resources", "Controlling program execution"],
+            answer: "Providing a standard interface for developers"
+        },
+        {
+            title: "Which technology is used for voice recognition and natural language processing?",
+            options: ["Optical character recognition", "Speech recognition", "Handwriting recognition"],
+            answer: "Speech recognition"
+        },
 
-    // Fourth Round
-    [
-    {
-        title: `System.out.println("SA"+(93))`,
-        options: [
-            'SA93',
-            'SA]',
-            'ERROR'
-        ],
-
-        answer: 'SA93'
-    },
-
-    {
-        title: 'متى يحتفل السعوديون باليوم الوطني؟',
-        options: ['23 سبتمبر', '20 سبتمبر', '19 سبتمبر'],
-
-        answer: '23 سبتمبر'
-    },
-
-    {
-        title: 'ما هي الرياضة الوطنية في المملكة العربية السعودية؟',
-        options: ['كرة السلة', 'كرة الطائرة', 'كرة القدم'],
-
-        answer: 'كرة القدم'
-    },
-
-    {
-        title: 'من هو مصمم علم المملكة العربية السعودية؟',
-        options: [
-            'حافظ وهبة',
-            'عبدالله الطريقي',
-            'سيد علي'
-        ],
-
-        answer: 'حافظ وهبة'
-    },
-
-    {
-        title: 'ماهو أعلى قمة جبلية في المملكة العربية السعودية؟',
-        options: [
-            'جبل أبها',
-            'جبل السودة',
-            'جبل الخرج',
-        ],
-
-        answer: 'جبل السودة'
-    },
-
-    {
-        title: `String KINGDOM = "Kingdom"; println(KINGDOM"Saudi + Arabia")`,
-        options: [
-            'KINGDOM Saudi Arabia',
-            'Kingdom Saudi Arabia',
-            'Error'
-        ],
-
-        answer: 'Error' 
-    },
-
-    {
-        title: ' من هو مؤسس الدولة السعودية الثانية؟',     
-        options: [   
-            'تركي بن سعود',      
-            'مشاري بن عبد الرحمن',      
-            'خالد بن سعود '
-        ],
-
-        answer: 'تركي بن سعود'
-    },
-
-    {
-        title: 'من هو أول من اطلق عليه خادم الحرمين الشريفين بالمملكة ؟',    
-        options: [ 
-            'الملك سعود بن عبدالعزيز بن آل سعود',
-            'الملك خالد بن عبدالعزيز بن آل سعود', 
-            'الملك فهد بن عبدالعزيز بن آل سعود'
-        ],
-
-        answer: 'الملك فهد بن عبدالعزيز بن آل سعود'
-    },
-
-    {
-        title: ' في أي عام ولد الملك عبدالعزيز بن آل سعود؟',  
-        options: ['1878', '1876', '1874'],  
-        answer: '1876'
-    },
-
-    {
-        title: ' ما المدة التي استمر فيها الملك عبد العزيز رافعًا راية الجهاد لتوحيد البلاد؟ ',  
-        options: [      
-            '31 سنة',   
-            '36 سنة',  
-            '29 سنة'
-        ],  
-        answer: '31 سنة'
-    },
-
-    {
-        title: 'متى تم فتح الرياض؟',  
-        options: ['1317', '1315', '1319'],
-        answer: '1319'
-    },
-
-
-    {
-        title: 'أي من الاتي ليست صحراء في المملكه ؟',  
-        options: ['النفاذ', 'الدهناء', 'الديرع'],  
-        answer: 'الديرع'
-    },
-
-    {
-        title: 'متى دخل الانترنت للمملكه ؟',  
-        options: ['1994', '1948', '1984'],  
-        answer: '1994'
-    },
-
-    {
-        title: 'متى تم انشاء اول حاسوب شخصي ؟',  
-        options: ['1977', '1988', '1966'],  
-        answer: '1977'
-    }, 
-
-
-    {
-        title: 'متى دخلت اللغه العربيه في اجهزه الحاسوب ؟',  
-        options: ['1981', '1986', '1991'],  
-        answer: '1986'
-    },
-
-    {       
-        title: 'كم كان عدد الجيش السعودي في بدايته ؟',  
-        options: ['60', '100', '80'],  
-        answer: '60'
-    }, 
-
-    {
-        title: 'متى تأسست الدولة السعودية الأولى؟',
-        options: ['1157', '1175', '1240'],
-        answer: '1157'
-    },
-
-    {
-        title: 'متى تأسست الدولة السعودية الثانية ؟',
-        options: ['1157', '1175', '1240', '1351'],
-        answer: '1240'
-    },
-  
-    {
-        title: 'متى تأسست المملكة العربية السعودية؟',
-        options: ['1157', '1175', '1240'],
-        answer: '1351'
-    },
-  
-    {
-        title: 'من هم ملوك السعودية بالترتيب؟',
-        options: [
-            'عبدالعزيز—>سعود—>فيصل—>خالد—>فهد—>عبدالله—>سلمان',
-            'عبدالعزيز—>فيصل—>سعود—>خالد—>فهد—>عبدالله—>سلمان',
-            'عبدالعزيز—>خالد—>فيصل—>سعود—>فهد—>عبدالله—>سلمان'
-        ],
-        answer: 'عبدالعزيز—>سعود—>فيصل—>خالد—>فهد—>عبدالله—>سلمان'
-    },
-
+        {
+            title: "Which programming language is commonly used for mobile app development?",
+            options: ["Python", "Ruby", "JavaScript", "Swift"],
+            answer: "Swift"
+        },
+        {
+            title: "What is the main purpose of a proxy server in computer networking?",
+            options: ["Caching web content", "Load balancing", "Security and privacy"],
+            answer: "Security and privacy"
+        },
     ],
+    [ // Round 4
+        {
+            title: "What is the main purpose of a content management system (CMS) in web development?",
+            options: ["Managing website content", "Creating website layouts", "Handling website security"],
+            answer: "Managing website content"
+        },
+        {
+            title: "What is the main purpose of a virtual private network (VPN) in computer security?",
+            options: ["Encrypting data", "Hiding IP addresses", "Providing remote access"],
+            answer: "Hiding IP addresses"
+        },
 
-
-    // Fifth Round
-    [
-    {
-        title: 'ماهي عاصمة الدولة السعودية الأولى ؟',
-        options: ['الرياض', 'الدرعية', 'العيينة'],
-        answer: 'الدرعية'
-    },
-
-    {
-        title: 'كم منطقة موجودة في المملكة العربية السعودية؟',
-        options: ['10', '13', '12'],
-        answer: '13'
-    },
-
-    {
-        title: ' من هو مؤسس الدولة السعودية الثانية؟ ',     
-        options: [   
-            'تركي بن سعود.',      
-            'مشاري بن عبد الرحمن',      
-            'خالد بن سعود '
-        ],
-        answer: 'تركي بن سعود.'
-    },
-
-    {
-        title: 'من هو أول من اطلق عليه خادم الحرمين الشريفين بالمملكة ؟',    
-        options: [ 
-            'الملك سعود بن عبدالعزيز بن آل سعود',
-            'الملك خالد بن عبدالعزيز بن آل سعود', 
-            'الملك فهد بن عبدالعزيز بن آل سعود'
-        ],
-        answer: 'الملك فهد بن عبدالعزيز بن آل سعود'
-    },
-
-    {
-        title: ' في أي عام ولد الملك عبدالعزيز بن آل سعود؟',  
-        options: ['1878', '1876', '1874'],  
-        answer: '1876'
-    },
-
-    {
-        title: ' ما المدة التي استمر فيها الملك عبد العزيز رافعًا راية الجهاد لتوحيد البلاد؟ ',  
-        options: ['31 سنة', '36 سنة', '29 سنة'],
-        answer: '31 سنة'
-    },
-
-    {
-        title: 'متى تم فتح الرياض؟',  
-        options: ['1317', '1315', '1319'],  
-        answer: '1319'
-    },
-    
-    {
-        title: 'أي من الاتي ليست صحراى في المملكه ؟',  
-        options: ['النفاذ', 'الدهناء', 'الديرع'],  
-        answer: 'الديرع'
-    },
-
-    {
-        title: 'متى دخل الانترنت للمملكه ؟',  
-        options: ['1994', '1948', '1984'],  
-        answer: '1994'
-    },
-
-    {
-        title: 'متى تم انشاء اول حاسوب شخصي ؟',  
-        options: ['1977', '1988', '1966'],  
-        answer: '1977'
-    },
-
-    {
-        title: 'متى دخلت اللغه العربيه في اجهزه الحاسوب ؟',
-        options: ['1981', '1986', '1991'],  
-        answer: '1986'
-    },
-
-    {
-        title: 'كم كان عدد الجيش السعودي في بدايته ؟',  
-        options: ['60', '100', '80'],  
-        answer: '60'
-    },
-
-    {
-        title: 'int[] x = new double[]{1,2,3}; println(x[1]);',
-        options: [
-            '2.0',
-            'Error',
-            '2'
-        ],
-
-        answer: 'Error'
-    },
-
-    {
-        title: `System.out.println("SA93" == "SA93");`,
-        options: [
-            'true',
-            'false'
-        ],
-
-        answer: 'true'
-    },
-
-    {
-        title: `String x = "SA93"; println(x == "SA93");`,
-        options: [
-            'true',
-            'false'
-        ],
-
-        answer: 'false'
-    },
-
-    {
-        title: `int x = 93; println(0 < x <= 100);`,
-        options: [
-            'true',
-            'false',
-            'Error'
-        ],
-
-        answer: 'Error'
-    },
-
-    {
-        title: `System.out.println("SA"+9+3);`,
-        options: [
-            "SA93",
-            "SA12",
-            "Error"
-        ],
-
-        answer: 'SA93'
-    },
-
-    {
-        title: `int x = (int) Math.pow(10, 12); println(x > Math.pow(10, 10))`,
-        options: [
-            'true',
-            'false',
-            'Error'
-        ],
-
-        answer: 'false'
-    },
-
-    {
-        title: `System.out.println('S'+'A'+'9'+'3');`,
-        options: [
-            'SA93',
-            'SA11',
-            'Neither'
-        ],
-
-        answer: 'Neither'
-    },
-
-    {
-        title: `println((Integer) 120 == (Integer) 120)`,
-        options: [
-            'true',
-            'false',
-            'Error'
-        ],
-
-        answer: 'false'
-    }
-
+        {
+            title: "Which programming language is commonly used for machine learning and artificial intelligence?",
+            options: ["Python", "R", "JavaScript"],
+            answer: "Python"
+        },
+        {
+            title: "What is the main purpose of a content delivery network (CDN) in web performance?",
+            options: ["Caching web content", "Distributing content globally", "Load balancing"],
+            answer: "Caching web content"
+        },
+        {
+            title: "Which technology is used for creating interactive and dynamic web pages?",
+            options: ["HTML", "CSS", "JavaScript"],
+            answer: "JavaScript"
+        },
+        {
+            title: "What is the main purpose of a web server in computer networking?",
+            options: ["Hosting web content", "Managing network traffic", "Providing security"],
+            answer: "Hosting web content"
+        },
+        {
+            title: "Which web protocol is used for secure communication between a user's browser and a server?",
+            options: ["HTTP", "HTTPS", "FTP"],
+            answer: "HTTPS"
+        }
+    ],
+    [ // Round 5
+        {
+            title: "What is the main purpose of a domain name system (DNS) in computer networking?",
+            options: ["Translating domain names to IP addresses", "Managing network resources", "Providing email services"],
+            answer: "Translating domain names to IP addresses"
+        },
+        {
+            title: "What is the main purpose of a load balancer in computer networking?",
+            options: ["Distributing network traffic", "Managing network security", "Monitoring network performance"],
+            answer: "Distributing network traffic"
+        },
+        {
+            title: "Which technology is used for creating dynamic and interactive web pages?",
+            options: ["HTML", "CSS", "JavaScript"],
+            answer: "JavaScript"
+        },
+        {
+            title: "Which programming language is commonly used for data analysis and visualization?",
+            options: ["Python", "R", "JavaScript"],
+            answer: "Python"
+        },
+        {
+            title: "Which technology is used for creating responsive and adaptive layouts in web design?",
+            options: ["HTML", "CSS", "JavaScript"],
+            answer: "CSS"
+        },
+        {
+            title: "What is the main purpose of a version control system (VCS) in software development?",
+            options: ["Managing source code changes", "Testing software functionality", "Deploying software to production"],
+            answer: "Managing source code changes"
+        },
+        {
+            title: "Which protocol is used for transferring files between devices on a local network?",
+            options: ["FTP", "FTPS", "HTTP"],
+            answer: "FTP"
+        }
     ]
 ]
 
