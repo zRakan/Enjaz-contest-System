@@ -5,10 +5,9 @@
 
 
 body {
-    background-image: url('../assets/background_enjaz.png');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: 100% 100%;
+    background: rgb(79,111,82);
+    background: linear-gradient(90deg, rgba(79,111,82,1) 50%, rgba(115,144,114,1) 100%); 
+
     font-family: 'montaser';
 }
 
@@ -48,8 +47,7 @@ header>h1 {
 
 
 .logos img {
-    height: 110px;
-    width: 305px;
+    width: 100px;
 }
 
 
@@ -146,78 +144,6 @@ header>h1 {
 }
 
 
-#parent_sponsor{
-
-     
-        position: absolute;
-        left: 87px;
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: #f2f2f4;
-        width: 235px;
-        height: 190px;
-        display: grid;
-        justify-content: center;
-        border-radius: 20px;
-        overflow: hidden;
-        
-}
-
-@media screen and (max-width: 1279px) {
-
-    #parent_sponsor{
-
-        display: none !important;
-        
-}
-    
-}
-
-#header_sponsor{
-
-    font-size: 11px;
-    color: white;
-    background-color: #3b7a51;
-    width: 99%;
-    height: 100%;
-    border-radius: 20px 20px 0px 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 35px;
-
-
-}
-
-#header_sponsor img{
-
-    width: 40px;
-    height: 40px;
-
-}
-
-#sponsor_img{
-
-    display: flex;
-}
-
-#first_sponsor{
-
-    width: 150px;
-    height: 150px;
-
-}
-
-
-#second_sponsor{
-
-    width: 90px;
-    height: 71px;
-    margin: 40px 0 0 45px;
-}
-
-
-
 footer {
     box-sizing: border-box;
     width: 100%;
@@ -241,7 +167,7 @@ footer p {
     font-size: 15px;
 
     position: relative;
-    color: #357a4d;
+    color: #E4C03A;
 }
 
 footer p:nth-child(2) {
@@ -276,13 +202,11 @@ footer p:nth-child(2) {
     
     
     .logos img {
-        height: 210px;
-        width: 455px;
+        width: 10%;
     }
 
     .logos {       
         top: 20px;
-        
     }
 }
 
